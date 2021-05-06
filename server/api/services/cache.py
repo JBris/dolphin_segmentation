@@ -1,4 +1,5 @@
 import redis
+import time
 
 #Wrapper class for the Redis cache.
 class Cache:
@@ -7,5 +8,12 @@ class Cache:
         self.cache = redis.Redis(host='redis', port=6379)
 
 
-    def inc(self, key):
-        return self.cache.inc(key)
+    def incr(self, key):
+        while True:
+            try: return self.cache.incr(key)
+            except redis.exceptions.ConnectionError as exc:
+                if retries == 0:
+                    raise exc
+                retries -= 1
+                time.sleep(0.5)
+        
