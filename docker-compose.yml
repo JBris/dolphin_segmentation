@@ -35,7 +35,7 @@ services:
     restart: always
     environment:
       NODE_ENV: $NODE_ENV
-      FLASK_SERVER: "nginx_flask:8080"
+      FLASK_SERVER: "nginx_flask:80"
       CHOKIDAR_USEPOLLING: $CHOKIDAR_USEPOLLING
     ports:
       - "${NGINX_VUE_PORT}:8080"
@@ -44,7 +44,7 @@ services:
         soft: -1
         hard: -1
     build: 
-      dockerfile: Dockerfile_prod
+      dockerfile: Dockerfile_dev
       context: ./client
       args:
         NODE_TAG: $NODE_TAG
