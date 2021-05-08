@@ -7,7 +7,9 @@ from setuptools import find_packages, setup
 
 install_requires = [
     'Flask==1.1.2',
+    'flask-cors==3.0.10',
     'gunicorn==20.0.4',
+    'python-decouple==3.4',
     'matplotlib==3.3',
     'opencv-python==4.5.1.48',
     'pandas==1.0.3',

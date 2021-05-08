@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+##########################################################
+### Wrapper script to call the flask docker container  ###    
+##########################################################
+
+docker-compose run flask "${@}" 

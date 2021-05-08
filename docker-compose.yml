@@ -26,6 +26,7 @@ services:
     command: gunicorn app:app -w 2 --threads 2 -b :5000 --reload --access-logfile -
     volumes:  
       - ./server:/app
+      - ./usr/local/lib/python3.8
 
   vue:
     image: "node:${NODE_TAG}"
@@ -35,7 +36,8 @@ services:
     restart: always
     environment:
       NODE_ENV: $NODE_ENV
-      FLASK_SERVER: "nginx_flask:80"
+      FLASK_HOST: "nginx_flask"
+      FLASK_PORT: "80"
       CHOKIDAR_USEPOLLING: $CHOKIDAR_USEPOLLING
     ports:
       - "${NGINX_VUE_PORT}:8080"
