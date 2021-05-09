@@ -78,6 +78,10 @@ services:
     restart: always
     ports:
       - "${JUPYTER_PORT}:8888"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     build: 
       dockerfile: Dockerfile
       context: ./jupyter
