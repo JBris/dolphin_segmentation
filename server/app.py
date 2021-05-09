@@ -11,6 +11,11 @@ CORS(app)
 
 cache = Cache()
 
+# import umap
+# import umap.plot
+
+key = 5
+
 def get_hit_count():
     retries = 5
     return cache.incr('hits')

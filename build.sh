@@ -25,3 +25,6 @@ docker-compose down
 docker-compose pull
 docker-compose build
 docker-compose up -d 
+
+echo
+./jupyter_token.sh

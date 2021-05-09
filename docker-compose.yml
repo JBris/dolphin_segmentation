@@ -23,7 +23,7 @@ services:
       context: ./server
       args:
         PYTHON_TAG: $PYTHON_TAG
-    command: gunicorn app:app -w 2 --threads 2 -b :5000 --reload --access-logfile -
+    command: gunicorn app:app --worker-class gevent --workers=3 --threads=3 -b :5000 --timeout 600 --reload --access-logfile -
     volumes:  
       - ./server:/app
       - ./usr/local/lib/python3.8
@@ -61,6 +61,8 @@ services:
     hostname: nginx_flask
     stop_grace_period: 60s
     restart: always
+    environment:
+      JUPYTER_ENABLE_LAB: $JUPYTER_ENABLE_LAB
     depends_on:
       - flask
     ports:
@@ -68,6 +70,22 @@ services:
     volumes:
       - ./server/services/nginx/conf.d:/etc/nginx/conf.d
 
+  jupyter:
+    image: "jupyter/tensorflow-notebook:${JUPYTER_TAG}"
+    container_name: "${PROJECT_NAME}_jupyter"
+    hostname: jupyter
+    stop_grace_period: 60s
+    restart: always
+    ports:
+      - "${JUPYTER_PORT}:8888"
+    build: 
+      dockerfile: Dockerfile
+      context: ./jupyter
+      args:
+        JUPYTER_TAG: $JUPYTER_TAG
+    volumes:
+      - .:/home/jovyan/work
+                
   redis:
     image: "redis:${REDIS_TAG}"
     container_name: "${PROJECT_NAME}_redis"
