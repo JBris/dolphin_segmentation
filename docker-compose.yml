@@ -12,8 +12,13 @@ services:
       FLASK_HOST: "0.0.0.0"
       FLASK_PORT: "5000"
       FLASK_ENV: $FLASK_ENV
+      FLASK_DEBUG: $FLASK_DEBUG
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
     ports:
       - "${FLASK_PORT}:5000"
+    depends_on:
+      - redis
     ulimits:
       memlock:
         soft: -1
@@ -27,7 +32,42 @@ services:
     volumes: 
       - .:/home/flask 
       - ./server:/app
-      - ./usr/local/lib/python3.8
+      #- ./usr/local/lib/python3.8
+
+  celery:
+    image: "python:${PYTHON_TAG}"
+    container_name: "${PROJECT_NAME}_celery"
+    hostname: celery
+    stop_grace_period: 60s
+    restart: always
+    environment:
+      FLASK_APP: "app.py"
+      FLASK_HOST: "0.0.0.0"
+      FLASK_PORT: "5000"
+      FLASK_ENV: $FLASK_ENV
+      FLASK_DEBUG: $FLASK_DEBUG
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      C_FORCE_ROOT: "true"
+    ports:
+      - "${CELERY_PORT}:5000"
+    depends_on:
+     - redis
+     - flask
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    build: 
+      dockerfile: Dockerfile
+      context: ./server
+      args:
+        PYTHON_TAG: $PYTHON_TAG
+    command: celery --app app.celery worker --loglevel=info
+    volumes: 
+      - .:/home/celery 
+      - ./server:/app
+      #- ./usr/local/lib/python3.8
 
   vue:
     image: "node:${NODE_TAG}"
@@ -53,8 +93,9 @@ services:
         NODE_TAG: $NODE_TAG
         NGINX_TAG: $NGINX_TAG
     volumes:  
+      - .:/home/vue 
       - ./client:/app
-      - /app/node_modules
+      #- /app/node_modules
     
   nginx_flask:
     image: "nginx:${NGINX_TAG}"
