@@ -1,16 +1,19 @@
 import celery.states as states
+import json
 
 from decouple import config
 from flask import Flask, jsonify, request, url_for
 from flask_cors import CORS
 
+from api.preprocessing.preprocessor import Preprocessor
 from api.services.celery import make_celery
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 
 app = Flask(__name__)
 app.config.update(
     CELERY_BROKER_URL = config('CELERY_BROKER_URL', default = 'redis://redis:6379/0'),
-    CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default = 'redis://redis:6379/0')
+    CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default = 'redis://redis:6379/0'),
+    JSON_SORT_KEYS = False
 )
 celery = make_celery(app)
 CORS(app)
@@ -36,29 +39,26 @@ def file_select():
     data = validator.validate(data)
     if data is None: return jsonify(validator.get_error_message()), 400 
 
-    return jsonify(data)
+    return process_file_select(data)
+    # task = celery.send_task(f'{app.import_name}.process_file_select', args=[data], kwargs={})
+    # return jsonify({
+    #     'url': f"{url_for('check_task_progress', task_id = task.id, external=True)}",
+    #     'task_id': task.id
+    # })
 
-import time
-@celery.task(name=f'{app.import_name}.add')
-def add(x: int, y: int) -> int:
-    time.sleep(5)
-    return x + y
 
-@app.route('/add/<int:param1>/<int:param2>')
-def add(param1: int, param2: int) -> str:
-    task = celery.send_task(f'{app.import_name}.add', args=[param1, param2], kwargs={})
-    return jsonify({
-        'url': f"{url_for('check_task', task_id = task.id, external=True)}",
-        'task_id': task.id
-    })
+@celery.task(name=f'{app.import_name}.process_file_select')
+def process_file_select(data):
+    preprocessed_data = Preprocessor().preprocess(data)
+    return preprocessed_data
 
-@app.route('/check/<string:task_id>')
-def check_task(task_id: str) -> str:
+@app.route('/check_progress/<string:task_id>')
+def check_task_progress(task_id: str) -> str:
     res = celery.AsyncResult(task_id)
     if res.state == states.PENDING:
         return res.state
     else:
-        return str(res.result)
+        return json.dumps(res.result)
 
 if __name__ == '__main__':
     app.run(host = config('FLASK_HOST', default = '0.0.0.0'), port = config('FLASK_PORT', default = '5000'))

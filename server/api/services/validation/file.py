@@ -8,7 +8,7 @@ from PIL import Image
 
 from api.services.file_select import permitted_format, FileSelectKeys, FileModule, FileTask, FileSolver, FileType
  
-IMAGE_DIR = config('IMAGE_DIR', default =  '/home/flask/images')
+IMAGE_DIR = config('IMAGE_DIR', default =  '/home/app/images')
 
 def check_valid_image(path):
     try: 

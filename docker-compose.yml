@@ -14,6 +14,7 @@ services:
       FLASK_ENV: $FLASK_ENV
       FLASK_DEBUG: $FLASK_DEBUG
       IMAGE_DIR: "/home/app/images"
+      OUT_DIR: "/home/app/out"
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
     ports:
@@ -47,6 +48,7 @@ services:
       FLASK_ENV: $FLASK_ENV
       FLASK_DEBUG: $FLASK_DEBUG
       IMAGE_DIR: "/home/app/images"
+      OUT_DIR: "/home/app/out"
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       C_FORCE_ROOT: "true"
@@ -111,6 +113,10 @@ services:
 
   flower:  
     image: mher/flower:${FLOWER_TAG}
+    container_name: "${PROJECT_NAME}_flower"
+    hostname: flower
+    stop_grace_period: 60s
+    restart: always
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
       FLOWER_PORT: "8888"

@@ -1,6 +1,7 @@
 from enum import Enum, unique
 
 permitted_format =  {
+    "name": "Provide a name for this file selection.",
     "module": "dolphin",
     "task": "identification | classification",
     "solver": "umap | triplet_loss",
@@ -10,6 +11,7 @@ permitted_format =  {
 
 @unique
 class FileSelectKeys(Enum):
+    NAME = "name"
     MODULE = "module"
     TASK = "task"
     SOLVER = "solver"
