@@ -2,23 +2,18 @@ import os
 import tarfile
 import zipfile
 
-from enum import Enum, unique
+from decouple import config
 from pathlib import Path
 from PIL import Image
 
-BASE_DIR = "/home/flask/images"
+from api.services.file_select import permitted_format, FileSelectKeys, FileModule, FileTask, FileSolver, FileType
+ 
+IMAGE_DIR = config('IMAGE_DIR', default =  '/home/flask/images')
 
 def check_valid_image(path):
     try: 
         with Image.open(path) as test_image: return True
     except IOError: return False
-
-@unique
-class FileType(Enum):
-    ZIP = "zip"
-    TAR = "tar"
-    DIR = "dir"
-    IMAGES = "images"
 
 class FileValidatorBase:
 
@@ -38,10 +33,7 @@ class FileSelectValidator(FileValidatorBase):
         self.error_message = {
             "Error": "1", 
             "Message": "Invalid request body format.", 
-            "Permitted format": {
-                "type": "zip | tar | dir | images",
-                "files": "[files]"
-            }
+            "Permitted format": permitted_format
         } 
 
         self.message = ""
@@ -49,7 +41,13 @@ class FileSelectValidator(FileValidatorBase):
     def validate(self, request):
         data = request.get_json()
         if data is None: return None
-        if "type" not in data or "files" not in data: return None
+        
+        for key in FileSelectKeys:
+            if key.value not in data: return None
+
+        if data["module"] not in [item.value for item in FileModule]: return None
+        if data["task"] not in [item.value for item in FileTask]: return None
+        if data["solver"] not in [item.value for item in FileSolver]: return None
         if data["type"] not in [item.value for item in FileType]: return None
         
         return data
@@ -60,10 +58,7 @@ class FileListValidator(FileValidatorBase):
         self.error_message = {
             "Error": "1", 
             "Message": "Must supply a file list with one or more files.", 
-            "Permitted format": {
-                "type": "zip | tar | dir | images",
-                "files": "[files]"
-            }
+            "Permitted format": permitted_format
         }
         
         self.message = ""
@@ -95,7 +90,7 @@ class FilePathValidator(FileValidatorBase):
 
     def validate(self, data):
         first_file = data["files"][0]
-        full_file_path = f'{BASE_DIR}/{data["files"][0]}'
+        full_file_path = f'{IMAGE_DIR}/{data["files"][0]}'
 
         def display_error(invalid_file, message):
             self.message = message
@@ -123,7 +118,7 @@ class FilePathValidator(FileValidatorBase):
         if data["type"] == FileType.IMAGES.value:
             error_count = 0
             for image_file in data["files"]:
-                full_image_path = f'{BASE_DIR}/{image_file}'
+                full_image_path = f'{IMAGE_DIR}/{image_file}'
                 if os.path.exists(full_image_path): 
                     if check_valid_image(full_image_path): continue
                 self.error_message["Files"].append(image_file)
