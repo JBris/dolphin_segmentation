@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request, url_for
 from flask_cors import CORS
 
 from api.preprocessing.preprocessor import Preprocessor
+from api.processing.processor import Processor
+# from api.services.cache import Cache
 from api.services.celery import make_celery
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 
@@ -27,6 +29,8 @@ def home():
 
 @app.route('/file/select', methods=['POST'])
 def file_select():
+    # import pandas
+    # return pandas.DataFrame().to_parquet("/tmp/foo.bar")
     validator = FileSelectValidator()
     data = validator.validate(request)
     if data is None: return jsonify(validator.get_error_message()), 400 
@@ -50,7 +54,9 @@ def file_select():
 @celery.task(name=f'{app.import_name}.process_file_select')
 def process_file_select(data):
     preprocessed_data = Preprocessor().preprocess(data)
-    return preprocessed_data
+    processed_data = Processor().process(preprocessed_data)
+    # serialised_data = processed_data.to_feath
+    return processed_data.to_json()
 
 @app.route('/check_progress/<string:task_id>')
 def check_task_progress(task_id: str) -> str:

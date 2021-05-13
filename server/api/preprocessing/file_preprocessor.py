@@ -1,10 +1,8 @@
 import os
 import shutil
 import tarfile
-import uuid
 import zipfile
 
-from datetime import datetime
 from decouple import config
 from pathlib import Path
 
@@ -14,12 +12,12 @@ from api.services.validation.file import check_valid_image
 #zip | tar | dir | images
 
 IMAGE_DIR = config('IMAGE_DIR', default = '/home/app/images')
+OUT_DIR = config('OUT_DIR', default = '/home/app/out')
 
 def _add_preprocessing_metadata(data, path, files):
-    current_time = datetime.now().strftime('%Y_%m_%d_%H_%M')
     return {
         "path": path,
-        "name": f'{current_time}_{data["name"]}',
+        "name": data["name"],
         "type": data["type"],
         "files": files,
         "data": data
@@ -39,13 +37,13 @@ def preprocess_archive(data, extracted_path):
 
 def preprocess_zip(data):
     full_path = f"{IMAGE_DIR}/{data['files'][0]}"
-    extracted_path = f"/tmp/{uuid.uuid4().hex}"
+    extracted_path = f"{OUT_DIR}/{data['name']}"
     with zipfile.ZipFile(full_path, 'r') as f: f.extractall(extracted_path)
     return preprocess_archive(data, extracted_path)
 
 def preprocess_tar(data):
     full_path = f"{IMAGE_DIR}/{data['files'][0]}"
-    extracted_path = f"/tmp/{uuid.uuid4().hex}"
+    extracted_path = f"{OUT_DIR}/{data['name']}"
     with tarfile.open(full_path, 'r') as f: f.extractall(extracted_path)
     return preprocess_archive(data, extracted_path)
 
@@ -61,7 +59,9 @@ def preprocess_dir(data):
     return _add_preprocessing_metadata(data, str(full_path), files)
 
 def preprocess_images(data):
-    return _add_preprocessing_metadata(data, IMAGE_DIR, data["files"])
+    files = []
+    for file in data["files"]: files.append(f"{IMAGE_DIR}/{file}")
+    return _add_preprocessing_metadata(data, IMAGE_DIR, files)
 
 class FilePreprocessor:
     def preprocess(self, data):

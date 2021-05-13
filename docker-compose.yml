@@ -93,7 +93,7 @@ services:
         NODE_TAG: $NODE_TAG
         NGINX_TAG: $NGINX_TAG
     volumes:  
-      - .:/home/vue 
+      - .:/home/app 
       - ./client:/app
     
   nginx_flask:

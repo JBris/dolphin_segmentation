@@ -7,7 +7,6 @@ class Cache:
     def __init__(self):
         self.cache = redis.Redis(host='redis', port=6379)
 
-
     def incr(self, key):
         while True:
             try: return self.cache.incr(key)
