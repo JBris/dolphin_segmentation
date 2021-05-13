@@ -6,7 +6,12 @@ permitted_format =  {
     "task": "identification | classification",
     "solver": "umap | triplet_loss",
     "type": "zip | tar | dir | images",
-    "files": "[files]"
+    "files": "[files]",
+}
+
+optional_parameters =  {
+    "autodownload": "1 | 0",
+    "cache_duration": "86400",
 }
 
 @unique
@@ -38,3 +43,8 @@ class FileType(Enum):
     TAR = "tar"
     DIR = "dir"
     IMAGES = "images"
+
+@unique
+class FileAutodownload(Enum):
+    TRUE = 1
+    FALSE = 0

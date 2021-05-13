@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 from api.preprocessing.preprocessor import Preprocessor
 from api.processing.processor import Processor
-# from api.services.cache import Cache
+from api.services.cache import Cache
 from api.services.celery import make_celery
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 
@@ -17,8 +17,10 @@ app.config.update(
     CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default = 'redis://redis:6379/0'),
     JSON_SORT_KEYS = False
 )
-celery = make_celery(app)
 CORS(app)
+celery = make_celery(app)
+
+cache = Cache()
 
 @app.route('/', methods=['GET'])
 def home():
@@ -29,8 +31,6 @@ def home():
 
 @app.route('/file/select', methods=['POST'])
 def file_select():
-    # import pandas
-    # return pandas.DataFrame().to_parquet("/tmp/foo.bar")
     validator = FileSelectValidator()
     data = validator.validate(request)
     if data is None: return jsonify(validator.get_error_message()), 400 
@@ -43,28 +43,39 @@ def file_select():
     data = validator.validate(data)
     if data is None: return jsonify(validator.get_error_message()), 400 
 
-    return process_file_select(data)
-    # task = celery.send_task(f'{app.import_name}.process_file_select', args=[data], kwargs={})
-    # return jsonify({
-    #     'url': f"{url_for('check_task_progress', task_id = task.id, external=True)}",
-    #     'task_id': task.id
-    # })
-
+    task = celery.send_task(f'{app.import_name}.process_file_select', args=[data], kwargs={})
+    return jsonify({
+        'url': f"{url_for('check_task_progress', task_id = task.id, external=True)}",
+        'task_id': task.id
+    })
 
 @celery.task(name=f'{app.import_name}.process_file_select')
 def process_file_select(data):
+    task_name = data["name"]
+
+    if isinstance(data.get("cache_duration"), int): cache_duration = data["cache_duration"]
+    else: cache_duration = config('CACHE_DURATION', default = 86400, cast = int)
+
+    if data.get("autodownload") == 1 or data.get("autodownload") == 0: autodownload = data["autodownload"]
+    else: autodownload = config('AUTODOWNLOAD_FILE', default = 1, cast = int)
+
     preprocessed_data = Preprocessor().preprocess(data)
     processed_data = Processor().process(preprocessed_data)
-    # serialised_data = processed_data.to_feath
-    return processed_data.to_json()
+    serialised_data = processed_data.to_parquet(engine = "auto", compression = "snappy", index = False)
+    cache.set(f"processed_images_{task_name}", serialised_data, ex = cache_duration)
+    return {
+        "task": task_name,
+        "status": "complete",
+        "autodownload": autodownload
+    }
 
 @app.route('/check_progress/<string:task_id>')
-def check_task_progress(task_id: str) -> str:
+def check_task_progress(task_id: str):
     res = celery.AsyncResult(task_id)
     if res.state == states.PENDING:
         return res.state
     else:
-        return json.dumps(res.result)
+        return jsonify(res.result)
 
 if __name__ == '__main__':
     app.run(host = config('FLASK_HOST', default = '0.0.0.0'), port = config('FLASK_PORT', default = '5000'))

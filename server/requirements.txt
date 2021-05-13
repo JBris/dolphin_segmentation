@@ -49,6 +49,7 @@ partd==1.2.0
 Pillow==8.2.0
 prompt-toolkit==3.0.18
 psutil==5.8.0
+pyarrow==4.0.0
 pyct==0.4.8
 pynndescent==0.5.2
 pyparsing==2.4.7

@@ -6,7 +6,7 @@ from decouple import config
 from pathlib import Path
 from PIL import Image
 
-from api.services.file_select import permitted_format, FileSelectKeys, FileModule, FileTask, FileSolver, FileType
+from api.services.file_select import permitted_format, optional_parameters, FileSelectKeys, FileModule, FileTask, FileSolver, FileType
  
 IMAGE_DIR = config('IMAGE_DIR', default =  '/home/app/images')
 
@@ -33,7 +33,8 @@ class FileSelectValidator(FileValidatorBase):
         self.error_message = {
             "Error": "1", 
             "Message": "Invalid request body format.", 
-            "Permitted format": permitted_format
+            "Permitted format": permitted_format,
+            "Optional parameters": optional_parameters
         } 
 
         self.message = ""
@@ -49,7 +50,7 @@ class FileSelectValidator(FileValidatorBase):
         if data["task"] not in [item.value for item in FileTask]: return None
         if data["solver"] not in [item.value for item in FileSolver]: return None
         if data["type"] not in [item.value for item in FileType]: return None
-        
+
         return data
 
 class FileListValidator(FileValidatorBase):
@@ -58,7 +59,8 @@ class FileListValidator(FileValidatorBase):
         self.error_message = {
             "Error": "1", 
             "Message": "Must supply a file list with one or more files.", 
-            "Permitted format": permitted_format
+            "Permitted format": permitted_format,
+            "Optional parameters": optional_parameters
         }
         
         self.message = ""
