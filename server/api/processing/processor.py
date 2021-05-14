@@ -25,10 +25,9 @@ def create_processed_df(embeddings, cluster, data):
 class Processor:
     def process(self, data):
         if data["data"]["solver"] == FileSolver.UMAP.value: 
-            embeddings = UMAP().transform(data["preprocessed_images"], data["data"]["module"], data["data"]["task"])
+            embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
         else:
-            embeddings = UMAP().transform(data["preprocessed_images"], data["data"]["module"], data["data"]["task"])
-        del data["preprocessed_images"]
+            embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
 
         hdbscan = HDBSCAN()
         hdbscan.fit(embeddings)

@@ -1,5 +1,4 @@
 import celery.states as states
-import json
 
 from decouple import config
 from flask import Flask, jsonify, request, url_for

@@ -12,7 +12,6 @@ from api.services.validation.file import check_valid_image
 #zip | tar | dir | images
 
 IMAGE_DIR = config('IMAGE_DIR', default = '/home/app/images')
-OUT_DIR = config('OUT_DIR', default = '/home/app/out')
 
 def _add_preprocessing_metadata(data, path, files):
     return {
@@ -37,15 +36,13 @@ def preprocess_archive(data, extracted_path):
 
 def preprocess_zip(data):
     full_path = f"{IMAGE_DIR}/{data['files'][0]}"
-    extracted_path = f"{OUT_DIR}/{data['name']}"
-    with zipfile.ZipFile(full_path, 'r') as f: f.extractall(extracted_path)
-    return preprocess_archive(data, extracted_path)
+    with zipfile.ZipFile(full_path, 'r') as f: f.extractall(data["out"])
+    return preprocess_archive(data, data["out"])
 
 def preprocess_tar(data):
     full_path = f"{IMAGE_DIR}/{data['files'][0]}"
-    extracted_path = f"{OUT_DIR}/{data['name']}"
-    with tarfile.open(full_path, 'r') as f: f.extractall(extracted_path)
-    return preprocess_archive(data, extracted_path)
+    with tarfile.open(full_path, 'r') as f: f.extractall(data["out"])
+    return preprocess_archive(data, data["out"])
 
 def preprocess_dir(data):
     file_dir = data["files"][0]

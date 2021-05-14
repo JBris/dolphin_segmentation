@@ -1,17 +1,19 @@
+from decouple import config
 from enum import Enum, unique
 
 permitted_format =  {
     "name": "Provide a name for this file selection.",
     "module": "dolphin",
-    "task": "identification | classification",
+    "task": "segmentation | classification | identification",
     "solver": "umap | triplet_loss",
     "type": "zip | tar | dir | images",
     "files": "[files]",
+    "out": "output/directory"
 }
 
 optional_parameters =  {
     "autodownload": "1 | 0",
-    "cache_duration": "86400",
+    "cache_duration": config('CACHE_DURATION', default = 86400, cast = str),
 }
 
 @unique
@@ -22,6 +24,7 @@ class FileSelectKeys(Enum):
     SOLVER = "solver"
     TYPE = "type"
     FILES = "files"
+    OUT = "out"
 
 @unique
 class FileModule(Enum):
@@ -29,6 +32,7 @@ class FileModule(Enum):
 
 @unique
 class FileTask(Enum):
+    SEGMENTATION = "segmentation"
     CLASSIFICATION = "classification"
     IDENTIFICATION = "identification"
 
