@@ -1,7 +1,8 @@
 import celery.states as states
+import pyarrow as pa
 
 from decouple import config
-from flask import Flask, jsonify, request, url_for
+from flask import Flask, jsonify, request, url_for, make_response
 from flask_cors import CORS
 
 from api.preprocessing.preprocessor import Preprocessor
@@ -60,7 +61,7 @@ def process_file_select(data):
 
     preprocessed_data = Preprocessor().preprocess(data)
     processed_data = Processor().process(preprocessed_data)
-    serialised_data = processed_data.to_parquet(engine = "auto", compression = "snappy", index = False)
+    serialised_data = pa.serialize(processed_data).to_buffer().to_pybytes()
     cache.set(f"processed_images_{task_name}", serialised_data, ex = cache_duration)
     return {
         "task": task_name,
@@ -68,7 +69,18 @@ def process_file_select(data):
         "autodownload": autodownload
     }
 
-@app.route('/check_progress/<string:task_id>')
+@app.route('/file/download/<string:task_name>', methods=['GET'])
+def file_download(task_name: str):
+    serialised_data = cache.get(f"processed_images_{task_name}")
+    if serialised_data is None: return jsonify({"Error": "1", "Message": f"Data not found for task: {task_name}."}), 400 
+    deserialised_data = pa.deserialize(serialised_data)
+    csv_file = deserialised_data.to_csv(index = False, encoding='utf-8')
+    res = make_response(csv_file)
+    res.headers["Content-Disposition"] = f"attachment; filename={task_name}.csv"
+    res.headers["Content-Type"] = "text/csv"
+    return res
+
+@app.route('/check_progress/<string:task_id>', methods=['GET'])
 def check_task_progress(task_id: str):
     res = celery.AsyncResult(task_id)
     if res.state == states.PENDING:
