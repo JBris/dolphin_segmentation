@@ -1,5 +1,4 @@
 import celery.states as states
-import pyarrow as pa
 
 from decouple import config
 from flask import Flask, jsonify, request, url_for, make_response
@@ -9,6 +8,8 @@ from api.preprocessing.preprocessor import Preprocessor
 from api.processing.processor import Processor
 from api.services.cache import Cache
 from api.services.celery import make_celery
+from api.services.content_type import ContentType
+from api.services.serializer import Serializer
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 
 app = Flask(__name__)
@@ -61,7 +62,7 @@ def process_file_select(data):
 
     preprocessed_data = Preprocessor().preprocess(data)
     processed_data = Processor().process(preprocessed_data)
-    serialised_data = pa.serialize(processed_data).to_buffer().to_pybytes()
+    serialised_data = Serializer().serialize(processed_data) 
     cache.set(f"processed_images_{task_name}", serialised_data, ex = cache_duration)
     return {
         "task": task_name,
@@ -69,15 +70,19 @@ def process_file_select(data):
         "autodownload": autodownload
     }
 
-@app.route('/file/download/<string:task_name>', methods=['GET'])
-def file_download(task_name: str):
+@app.route('/file/download/<string:task_name>', defaults = {'format': 'csv'}, methods=['GET'])
+@app.route('/file/download/<string:task_name>/<string:format>', methods=['GET'])
+def file_download(task_name: str, format: str):
+    content_type = ContentType()
+    if not content_type.validate(format): return jsonify({"Error": "1", "Message": f"File format not supported: {format}."}), 400 
     serialised_data = cache.get(f"processed_images_{task_name}")
     if serialised_data is None: return jsonify({"Error": "1", "Message": f"Data not found for task: {task_name}."}), 400 
-    deserialised_data = pa.deserialize(serialised_data)
-    csv_file = deserialised_data.to_csv(index = False, encoding='utf-8')
-    res = make_response(csv_file)
-    res.headers["Content-Disposition"] = f"attachment; filename={task_name}.csv"
-    res.headers["Content-Type"] = "text/csv"
+
+    deserialised_data = Serializer().deserialize(serialised_data)
+    data_file = content_type.convert_df(deserialised_data, format)
+    res = make_response(data_file)
+    res.headers["Content-Disposition"] = f"attachment; filename={task_name}.{format}"
+    res.headers["Content-Type"] = content_type.get_content_type(format)
     return res
 
 @app.route('/check_progress/<string:task_id>', methods=['GET'])
