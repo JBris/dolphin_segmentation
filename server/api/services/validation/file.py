@@ -7,7 +7,8 @@ from pathlib import Path
 from PIL import Image
 
 from api.services.file_select import permitted_format, optional_parameters, FileSelectKeys, FileModule, FileTask, FileSolver, FileType
- 
+from api.services.validation.validator_base import ValidatorBase 
+
 IMAGE_DIR = config('IMAGE_DIR', default =  '/home/app/images')
 
 def check_valid_image(path):
@@ -15,20 +16,7 @@ def check_valid_image(path):
         with Image.open(path) as test_image: return True
     except IOError: return False
 
-class FileValidatorBase:
-
-    def __init__(self):
-        self.error_message = {} 
-        self.message = ""
-
-    def validate(self, data): return data
-
-    def get_error_message(self): 
-        error_message = self.error_message
-        if self.message != "": error_message["Message"] = self.message
-        return error_message
-
-class FileSelectValidator(FileValidatorBase):
+class FileSelectValidator(ValidatorBase):
     def __init__(self):
         self.error_message = {
             "Error": "1", 
@@ -53,7 +41,7 @@ class FileSelectValidator(FileValidatorBase):
 
         return data
 
-class FileListValidator(FileValidatorBase):
+class FileListValidator(ValidatorBase):
 
     def __init__(self):
         self.error_message = {
@@ -80,7 +68,7 @@ class FileListValidator(FileValidatorBase):
         data["files"] = list(set(data["files"]))
         return data
 
-class FilePathValidator(FileValidatorBase):
+class FilePathValidator(ValidatorBase):
     def __init__(self):
         self.error_message = {
             "Error": "1", 
