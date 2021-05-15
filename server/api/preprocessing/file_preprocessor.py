@@ -11,12 +11,8 @@ from api.services.validation.file import check_valid_image
 
 #zip | tar | dir | images
 
-IMAGE_DIR = config('IMAGE_DIR', default = '/home/app/images')
-OUT_DIR = config('OUT_DIR', default = '/home/app/out')
-
-def _add_preprocessing_metadata(data, path, files):
+def _add_preprocessing_metadata(data, files):
     return {
-        "path": path,
         "name": data["name"],
         "type": data["type"],
         "files": files,
@@ -33,37 +29,32 @@ def preprocess_archive(data, extracted_path):
         file = str(file)
         if check_valid_image(file): files.append(file)
 
-    return _add_preprocessing_metadata(data, extracted_path, files)
+    return _add_preprocessing_metadata(data, files)
 
 def preprocess_zip(data):
-    full_path = f"{IMAGE_DIR}/{data['files'][0]}"
-    out = f"{OUT_DIR}/{data['out']}"
-    Path(out).mkdir(parents = True, exist_ok = True)
-    with zipfile.ZipFile(full_path, 'r') as f: f.extractall(out)
-    return preprocess_archive(data, out)
+    Path(data['out']).mkdir(parents = True, exist_ok = True)
+    with zipfile.ZipFile(data['files'][0], 'r') as f: f.extractall(data['out'])
+    return preprocess_archive(data, f"{data['out']}/{Path(data['files'][0]).stem}")
 
 def preprocess_tar(data):
-    full_path = f"{IMAGE_DIR}/{data['files'][0]}"
-    out = f"{OUT_DIR}/{data['out']}"
-    Path(out).mkdir(parents = True, exist_ok = True)
-    with tarfile.open(full_path, 'r') as f: f.extractall(out)
-    return preprocess_archive(data, out)
+    Path(data['out']).mkdir(parents = True, exist_ok = True)
+    with tarfile.open(data['files'][0], 'r') as f: f.extractall(data['out'])
+    return preprocess_archive(data, f"{data['out']}/{Path(data['files'][0]).stem}")
 
 def preprocess_dir(data):
-    file_dir = data["files"][0]
-    full_path = Path(f"{IMAGE_DIR}/{file_dir}")
+    full_path = Path(data["files"][0])
 
     files = []
     for file in full_path.glob("*"):
         file = str(file)
         if check_valid_image(file): files.append(file)
 
-    return _add_preprocessing_metadata(data, str(full_path), files)
+    return _add_preprocessing_metadata(data, files)
 
 def preprocess_images(data):
     files = []
-    for file in data["files"]: files.append(f"{IMAGE_DIR}/{file}")
-    return _add_preprocessing_metadata(data, IMAGE_DIR, files)
+    for file in data["files"]: files.append(file)
+    return _add_preprocessing_metadata(data, files)
 
 class FilePreprocessor:
     def preprocess(self, data):

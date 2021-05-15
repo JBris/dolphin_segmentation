@@ -35,7 +35,9 @@ services:
         PYTHON_TAG: $PYTHON_TAG
     command: gunicorn app:app --worker-class gevent --workers=3 --threads=3 -b :5000 --timeout 600 --reload --access-logfile -
     volumes: 
-      - .:/home/app 
+      - ./images:$IMAGE_DIR
+      - ./datasets:$DATASET_DIR
+      - ./out:$OUT_DIR
       - ./server:/app
 
   celery:
@@ -72,7 +74,9 @@ services:
         PYTHON_TAG: $PYTHON_TAG
     command: celery --app app.celery worker --loglevel=info
     volumes: 
-      - .:/home/app 
+      - ./images:$IMAGE_DIR
+      - ./datasets:$DATASET_DIR
+      - ./out:$OUT_DIR
       - ./server:/app
 
   vue:
@@ -104,7 +108,9 @@ services:
         NODE_TAG: $NODE_TAG
         NGINX_TAG: $NGINX_TAG
     volumes:  
-      - .:/home/app 
+      - ./images:$IMAGE_DIR
+      - ./datasets:$DATASET_DIR
+      - ./out:$OUT_DIR
       - ./client:/app
     
   nginx_flask:

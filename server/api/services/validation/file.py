@@ -9,8 +9,6 @@ from PIL import Image
 from api.services.file_select import permitted_format, optional_parameters, FileSelectKeys, FileModule, FileTask, FileSolver, FileType
 from api.services.validation.validator_base import ValidatorBase 
 
-IMAGE_DIR = config('IMAGE_DIR', default =  '/home/app/images')
-
 def check_valid_image(path):
     try: 
         with Image.open(path) as test_image: return True
@@ -81,7 +79,6 @@ class FilePathValidator(ValidatorBase):
 
     def validate(self, data):
         first_file = data["files"][0]
-        full_file_path = f'{IMAGE_DIR}/{data["files"][0]}'
 
         def display_error(invalid_file, message):
             self.message = message
@@ -89,26 +86,25 @@ class FilePathValidator(ValidatorBase):
             return None
             
         if data["type"]  == FileType.ZIP.value or data["type"]  == FileType.TAR.value or data["type"]  == FileType.DIR.value:
-            if os.path.exists(full_file_path) is False: return display_error(first_file, "One or more supplied files does not exist.")
+            if os.path.exists(data["files"][0]) is False: return display_error(first_file, "One or more supplied files does not exist.")
 
         if data["type"]  == FileType.TAR.value:
             tar_message = "Provided tar file is not valid."
             try: 
-                if tarfile.is_tarfile(full_file_path) is False: return display_error(first_file, tar_message)
+                if tarfile.is_tarfile(data["files"][0]) is False: return display_error(first_file, tar_message)
             except: return display_error(first_file, tar_message)
 
-        if data["type"]  == FileType.ZIP.value and zipfile.is_zipfile(full_file_path) is False: 
+        if data["type"]  == FileType.ZIP.value and zipfile.is_zipfile(data["files"][0]) is False: 
             return display_error(first_file, "Provided zip file is not valid.")
 
-        if data["type"]  == FileType.DIR.value and os.path.isdir(full_file_path) is False: 
+        if data["type"]  == FileType.DIR.value and os.path.isdir(data["files"][0]) is False: 
             return display_error(first_file, "Selected directory is not valid.")
 
         if data["type"] == FileType.IMAGES.value:
             error_count = 0
             for image_file in data["files"]:
-                full_image_path = f'{IMAGE_DIR}/{image_file}'
-                if os.path.exists(full_image_path): 
-                    if check_valid_image(full_image_path): continue
+                if os.path.exists(image_file): 
+                    if check_valid_image(image_file): continue
                 self.error_message["files"].append(image_file)
                 error_count += 1
             if error_count > 0: 
