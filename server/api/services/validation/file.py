@@ -102,9 +102,6 @@ class FilePathValidator(ValidatorBase):
 
         if data["type"]  == FileType.DIR.value and os.path.isdir(full_file_path) is False: 
             return display_error(first_file, "Selected directory is not valid.")
-        
-            #image_path = Path(full_file_path)
-            # for image in image_path.glob('*'): 
 
         if data["type"] == FileType.IMAGES.value:
             error_count = 0

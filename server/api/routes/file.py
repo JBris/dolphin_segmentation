@@ -5,9 +5,11 @@ from flask import Blueprint, request, jsonify, current_app, url_for, make_respon
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
 from api.services.content_type import ContentType
+from api.services.deletion import Deletion
 from api.services.serializer import Serializer
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.validation.visualisation import FileVisualisationValidator, FilePathValidator as FileVisualisationPathValidator
+from api.services.validation.delete import FileDeletionValidator
 from api.services.validation.download import FileDownloadValidator
 from api.visualisation.visualisation import Visualisation
 
@@ -95,6 +97,17 @@ def file_visualisation_by_file():
 
     plot = visualisation.visualise(data["method"], data["data"])
     return jsonify(plot)
+
+@file_api.route('/delete', methods=['DELETE'])
+def file_delete():
+    deletion_validator = FileDeletionValidator()
+    data = deletion_validator.validate(request)
+    if data is None: return jsonify(deletion_validator.get_error_message()), 400 
+    deletions = Deletion().delete_multiple(data["files"])
+    return jsonify({
+        "status": "complete",
+        "files": deletions
+    })
 
 @file_api.route('/check_progress/<string:task_id>', methods=['GET'])
 def file_check_progress(task_id: str):

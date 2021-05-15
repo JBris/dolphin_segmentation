@@ -1,5 +1,3 @@
-import os
-
 from api.services.file_download import permitted_format, FileDownloadKeys
 from api.services.validation.validator_base import ValidatorBase 
 
