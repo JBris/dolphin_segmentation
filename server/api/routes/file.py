@@ -4,11 +4,12 @@ from flask import Blueprint, request, jsonify, current_app, url_for, make_respon
 
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
-from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.content_type import ContentType
 from api.services.serializer import Serializer
-from api.visualisation.visualisation import Visualisation
+from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.validation.visualisation import FileVisualisationValidator, FilePathValidator as FileVisualisationPathValidator
+from api.services.validation.download import FileDownloadValidator
+from api.visualisation.visualisation import Visualisation
 
 @file_api.route('/select', methods=['POST'])
 def file_select():
@@ -44,6 +45,25 @@ def file_download(task_name: str, format: str):
     res.headers["Content-Disposition"] = f"attachment; filename={task_name}.{format}"
     res.headers["Content-Type"] = content_type.get_content_type(format)
     return res
+
+@file_api.route('/download', methods=['POST'])
+def file_download_to_dir():
+    validator = FileDownloadValidator()
+    data = validator.validate(request)
+    if data is None: return jsonify(validator.get_error_message()), 400 
+
+    content_type = ContentType()
+    if not content_type.validate(data["format"]): return jsonify({"error": "1", "message": f"File format not supported: {data['format']}."}), 400 
+    serialised_data = current_app.config["CACHE"].get(f"processed_images_{data['task']}")
+    if serialised_data is None: return jsonify({"error": "1", "message": f"Data not found for task: {data['task']}."}), 404 
+
+    deserialised_data = Serializer().deserialize(serialised_data)
+    df, out = content_type.write_df(deserialised_data, data["task"], data["format"], data["out"])
+
+    return jsonify({
+        "status": "complete",
+        "out": out
+    })
 
 @file_api.route('/visualisation/<string:method>/<string:task_name>', methods=['GET'])
 def file_visualisation_by_task(method: str, task_name: str):
@@ -95,4 +115,3 @@ def file_check_progress(task_id: str):
             res["substep_total"] = job.result['substep_total']
         return jsonify(res), 202 
     else: return jsonify({"status": "error"}), 500
-
