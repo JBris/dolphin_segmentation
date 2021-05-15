@@ -38,7 +38,8 @@ class FileSelectValidator(ValidatorBase):
         if data["task"] not in [item.value for item in FileTask]: return None
         if data["solver"] not in [item.value for item in FileSolver]: return None
         if data["type"] not in [item.value for item in FileType]: return None
-
+        if data["out"] == "": return None
+        
         return data
 
 class FileListValidator(ValidatorBase):

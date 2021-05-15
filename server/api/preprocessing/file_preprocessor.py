@@ -38,14 +38,16 @@ def preprocess_archive(data, extracted_path):
 def preprocess_zip(data):
     full_path = f"{IMAGE_DIR}/{data['files'][0]}"
     out = f"{OUT_DIR}/{data['out']}"
+    Path(out).mkdir(parents = True, exist_ok = True)
     with zipfile.ZipFile(full_path, 'r') as f: f.extractall(out)
-    return preprocess_archive(data, data["out"])
+    return preprocess_archive(data, out)
 
 def preprocess_tar(data):
     full_path = f"{IMAGE_DIR}/{data['files'][0]}"
     out = f"{OUT_DIR}/{data['out']}"
+    Path(out).mkdir(parents = True, exist_ok = True)
     with tarfile.open(full_path, 'r') as f: f.extractall(out)
-    return preprocess_archive(data, data["out"])
+    return preprocess_archive(data, out)
 
 def preprocess_dir(data):
     file_dir = data["files"][0]

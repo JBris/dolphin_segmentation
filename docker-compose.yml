@@ -13,9 +13,9 @@ services:
       FLASK_PORT: "5000"
       FLASK_ENV: $FLASK_ENV
       FLASK_DEBUG: $FLASK_DEBUG
-      IMAGE_DIR: "/home/app/images"
-      DATASET_DIR: "/home/app/datasets"
-      OUT_DIR: "/home/app/out"
+      IMAGE_DIR: $IMAGE_DIR
+      DATASET_DIR: $DATASET_DIR
+      OUT_DIR: $OUT_DIR
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       AUTODOWNLOAD_FILE: $AUTODOWNLOAD_FILE
@@ -50,9 +50,9 @@ services:
       FLASK_PORT: "5000"
       FLASK_ENV: $FLASK_ENV
       FLASK_DEBUG: $FLASK_DEBUG
-      IMAGE_DIR: "/home/app/images"
-      DATASET_DIR: "/home/app/datasets"
-      OUT_DIR: "/home/app/out"
+      IMAGE_DIR: $IMAGE_DIR
+      DATASET_DIR: $DATASET_DIR
+      OUT_DIR: $OUT_DIR
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       C_FORCE_ROOT: "true"
@@ -85,9 +85,9 @@ services:
       NODE_ENV: $NODE_ENV
       FLASK_HOST: "nginx_flask"
       FLASK_PORT: "80"
-      IMAGE_DIR: "/home/app/images"
-      DATASET_DIR: "/home/app/datasets"
-      OUT_DIR: "/home/app/out"
+      IMAGE_DIR: $IMAGE_DIR
+      DATASET_DIR: $DATASET_DIR
+      OUT_DIR: $OUT_DIR
       CHOKIDAR_USEPOLLING: $CHOKIDAR_USEPOLLING
       AUTODOWNLOAD_FILE: $AUTODOWNLOAD_FILE
       CACHE_DURATION: $CACHE_DURATION
