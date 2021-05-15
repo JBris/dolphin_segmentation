@@ -34,9 +34,9 @@ def file_select():
 @file_api.route('/download/<string:task_name>/<string:format>', methods=['GET'])
 def file_download(task_name: str, format: str):
     content_type = ContentType()
-    if not content_type.validate(format): return jsonify({"Error": "1", "Message": f"File format not supported: {format}."}), 400 
+    if not content_type.validate(format): return jsonify({"error": "1", "message": f"File format not supported: {format}."}), 400 
     serialised_data = current_app.config["CACHE"].get(f"processed_images_{task_name}")
-    if serialised_data is None: return jsonify({"Error": "1", "Message": f"Data not found for task: {task_name}."}), 404 
+    if serialised_data is None: return jsonify({"error": "1", "message": f"Data not found for task: {task_name}."}), 404 
 
     deserialised_data = Serializer().deserialize(serialised_data)
     data_file = content_type.convert_df(deserialised_data, format)
@@ -48,10 +48,10 @@ def file_download(task_name: str, format: str):
 @file_api.route('/visualisation/<string:method>/<string:task_name>', methods=['GET'])
 def file_visualisation_by_task(method: str, task_name: str):
     visualisation = Visualisation()
-    if not visualisation.validate(method): return jsonify({"Error": "1", "Message": f"Visualisation method not supported: {method}."}), 400 
+    if not visualisation.validate(method): return jsonify({"error": "1", "message": f"Visualisation method not supported: {method}."}), 400 
 
     serialised_data = current_app.config["CACHE"].get(f"processed_images_{task_name}")
-    if serialised_data is None: return jsonify({"Error": "1", "Message": f"Data not found for task: {task_name}."}), 404 
+    if serialised_data is None: return jsonify({"error": "1", "message": f"Data not found for task: {task_name}."}), 404 
 
     deserialised_data = Serializer().deserialize(serialised_data)
     plot = visualisation.visualise(method, deserialised_data)
@@ -64,10 +64,10 @@ def file_visualisation_by_file():
     if data is None: return jsonify(validator.get_error_message()), 400 
 
     content_type = ContentType()
-    if not content_type.validate(data["format"]): return jsonify({"Error": "1", "Message": f"File format not supported: {data['format']}."}), 400 
+    if not content_type.validate(data["format"]): return jsonify({"error": "1", "message": f"File format not supported: {data['format']}."}), 400 
 
     visualisation = Visualisation()
-    if not visualisation.validate(data["method"]): return jsonify({"Error": "1", "Message": f"Visualisation method not supported: {data['method']}."}), 400 
+    if not visualisation.validate(data["method"]): return jsonify({"error": "1", "message": f"Visualisation method not supported: {data['method']}."}), 400 
 
     validator = FileVisualisationPathValidator()
     data = validator.validate(data)
@@ -78,8 +78,21 @@ def file_visualisation_by_file():
 
 @file_api.route('/check_progress/<string:task_id>', methods=['GET'])
 def file_check_progress(task_id: str):
-    res = current_app.config["FILE_WORKER"].AsyncResult(task_id)
-    if res.state == states.PENDING:
-        return res.state
-    else:
-        return jsonify(res.result)
+    job = current_app.config["FILE_WORKER"].AsyncResult(task_id)
+    if job.state == states.PENDING: return jsonify({"status": "pending"}), 202
+    elif job.state == states.SUCCESS: return jsonify(job.result)
+    elif job.state == "PROGRESS":
+        res = {
+            "status": "progress",
+            "step": job.result["step"],
+            "step_num": job.result['step_num'],
+            "step_total": job.result['step_total'],
+            "substeps": job.result["substeps"]
+        }
+        if res["substeps"] == 1:
+            res["substep"] = job.result["substep"],
+            res["substep_num"] = job.result['substep_num']
+            res["substep_total"] = job.result['substep_total']
+        return jsonify(res), 202 
+    else: return jsonify({"status": "error"}), 500
+

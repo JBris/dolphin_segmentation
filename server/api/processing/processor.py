@@ -23,7 +23,8 @@ def create_processed_df(embeddings, cluster, data):
     )
 
 class Processor:
-    def process(self, data):
+    def process(self, data, current_task):
+        current_task.update_state(state = "PROGRESS", meta = {"step": "Processing images", "step_num": 2, "step_total": 4, "substeps": 0})
         if data["data"]["solver"] == FileSolver.UMAP.value: 
             embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
         else:

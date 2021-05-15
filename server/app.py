@@ -1,4 +1,4 @@
-
+from celery import current_task
 from decouple import config
 from flask import Flask, jsonify, current_app
 from flask_cors import CORS
@@ -41,9 +41,11 @@ def process_file_select(data):
     if data.get("autodownload") == 1 or data.get("autodownload") == 0: autodownload = data["autodownload"]
     else: autodownload = config('AUTODOWNLOAD_FILE', default = 1, cast = int)
 
-    preprocessed_data = Preprocessor().preprocess(data)
-    processed_data = Processor().process(preprocessed_data)
+    preprocessed_data = Preprocessor().preprocess(data, current_task)
+    processed_data = Processor().process(preprocessed_data, current_task)
+    current_task.update_state(state = "PROGRESS", meta = {"step": "Serializing data", "step_num": 3, "step_total": 4, "substeps": 0})
     serialised_data = Serializer().serialize(processed_data) 
+    current_task.update_state(state = "PROGRESS", meta = {"step": "Caching data", "step_num": 4, "step_total": 4, "substeps": 0})
     current_app.config["CACHE"].set(f"processed_images_{task_name}", serialised_data, ex = cache_duration)
     return {
         "task": task_name,

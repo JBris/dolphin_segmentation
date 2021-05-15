@@ -19,10 +19,10 @@ def check_valid_image(path):
 class FileSelectValidator(ValidatorBase):
     def __init__(self):
         self.error_message = {
-            "Error": "1", 
-            "Message": "Invalid request body format.", 
-            "Permitted format": permitted_format,
-            "Optional parameters": optional_parameters
+            "error": "1", 
+            "message": "Invalid request body format.", 
+            "permitted format": permitted_format,
+            "optional parameters": optional_parameters
         } 
 
         self.message = ""
@@ -45,10 +45,10 @@ class FileListValidator(ValidatorBase):
 
     def __init__(self):
         self.error_message = {
-            "Error": "1", 
-            "Message": "Must supply a file list with one or more files.", 
-            "Permitted format": permitted_format,
-            "Optional parameters": optional_parameters
+            "error": "1", 
+            "message": "Must supply a file list with one or more files.", 
+            "permitted format": permitted_format,
+            "optional parameters": optional_parameters
         }
         
         self.message = ""
@@ -71,9 +71,9 @@ class FileListValidator(ValidatorBase):
 class FilePathValidator(ValidatorBase):
     def __init__(self):
         self.error_message = {
-            "Error": "1", 
-            "Message": "One or more supplied files does not exist.",  
-            "Files": []
+            "error": "1", 
+            "message": "One or more supplied files does not exist.",  
+            "files": []
         }
 
         self.message = ""
@@ -84,7 +84,7 @@ class FilePathValidator(ValidatorBase):
 
         def display_error(invalid_file, message):
             self.message = message
-            self.error_message["Files"].append(invalid_file)
+            self.error_message["files"].append(invalid_file)
             return None
             
         if data["type"]  == FileType.ZIP.value or data["type"]  == FileType.TAR.value or data["type"]  == FileType.DIR.value:
@@ -111,7 +111,7 @@ class FilePathValidator(ValidatorBase):
                 full_image_path = f'{IMAGE_DIR}/{image_file}'
                 if os.path.exists(full_image_path): 
                     if check_valid_image(full_image_path): continue
-                self.error_message["Files"].append(image_file)
+                self.error_message["files"].append(image_file)
                 error_count += 1
             if error_count > 0: 
                 self.message = "Invalid image files have been provided."
