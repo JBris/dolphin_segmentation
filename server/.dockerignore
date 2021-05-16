@@ -1,8 +1,12 @@
-./server/Dockerfile
+**/Dockerfile
 .git
 .gitignore
 
-images
+**/images
+**/out
+**/datasets
+**/system
+**/models
 video
 output
 
