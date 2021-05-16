@@ -1,8 +1,8 @@
-# from bokeh.embed import json_item
-# from bokeh.models import HoverTool
-# from bokeh.models.tools import LassoSelectTool
-# from umap import UMAP as UMAPBase
-# from umap.plot import interactive
+from bokeh.embed import json_item
+from bokeh.models import HoverTool
+from bokeh.models.tools import LassoSelectTool
+from umap import UMAP as UMAPBase
+from umap.plot import interactive
 
 def get_hovertool():
     return HoverTool(
@@ -40,7 +40,6 @@ def get_hovertool():
 
 class UMAP:
     def visualise(self, data):
-        return data.to_json()
         mapper = UMAPBase()
         mapper.embedding_ = data[["x", "y"]].values
         p = interactive(mapper, labels = data["class"], hover_data = data, point_size = 5, interactive_text_search = False)

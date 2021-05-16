@@ -14,6 +14,23 @@ default_options = {
             "editable": 0
         },
     },
+    "features": {
+        "segmentation": {
+            "name": "Segmentation",
+            "enabled": 1,
+            "editable": 0
+        },
+        "classification": {
+            "name": "Classification",
+            "enabled": 1,
+            "editable": 0
+        },
+        "identification": {
+            "name": "Identification",
+            "enabled": 1,
+            "editable": 0
+        }
+    },
     "solvers": {
         "triplet_loss": {
             "name": "Triplet Loss",
