@@ -146,3 +146,14 @@ def file_check_progress(task_id: str):
             res["substep_total"] = job.result['substep_total']
         return jsonify(res), 202 
     else: return jsonify({"status": "error"}), 500
+
+@file_api.route('/options', methods=['GET', 'POST', 'PUT'])
+def file_options():
+    if request.method == "GET": return jsonify(current_app.config["OPTIONS"].get())
+    elif request.method == "POST": return jsonify(current_app.config["OPTIONS"].reset())
+    else:
+        options =  current_app.config["OPTIONS"].update_from_request(request)
+        if options is None: return jsonify({"error": 1, "message": "Invalid options provided."}), 400
+        return jsonify(options)
+
+

@@ -8,6 +8,7 @@ from api.processing.processor import Processor
 from api.routes.file  import file_api
 from api.services.cache import Cache
 from api.services.celery import make_celery
+from api.services.options import Options
 from api.services.serializer import Serializer
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ app.config.update(
 celery = make_celery(app)
 app.config["FILE_WORKER"] = celery
 app.config["CACHE"] = Cache()
+app.config["OPTIONS"] = Options()
 
 app.register_blueprint(file_api)
 

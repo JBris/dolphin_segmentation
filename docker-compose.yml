@@ -16,6 +16,7 @@ services:
       IMAGE_DIR: $IMAGE_DIR
       DATASET_DIR: $DATASET_DIR
       OUT_DIR: $OUT_DIR
+      SYSTEM_DIR: $SYSTEM_DIR
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       AUTODOWNLOAD_FILE: $AUTODOWNLOAD_FILE
@@ -38,6 +39,7 @@ services:
       - ./images:$IMAGE_DIR
       - ./datasets:$DATASET_DIR
       - ./out:$OUT_DIR
+      - ./system:$SYSTEM_DIR
       - ./server:/app
 
   celery:
@@ -55,6 +57,7 @@ services:
       IMAGE_DIR: $IMAGE_DIR
       DATASET_DIR: $DATASET_DIR
       OUT_DIR: $OUT_DIR
+      SYSTEM_DIR: $SYSTEM_DIR
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       C_FORCE_ROOT: "true"
@@ -77,6 +80,7 @@ services:
       - ./images:$IMAGE_DIR
       - ./datasets:$DATASET_DIR
       - ./out:$OUT_DIR
+      - ./system:$SYSTEM_DIR
       - ./server:/app
 
   vue:
@@ -92,6 +96,7 @@ services:
       IMAGE_DIR: $IMAGE_DIR
       DATASET_DIR: $DATASET_DIR
       OUT_DIR: $OUT_DIR
+      SYSTEM_DIR: $SYSTEM_DIR
       CHOKIDAR_USEPOLLING: $CHOKIDAR_USEPOLLING
       AUTODOWNLOAD_FILE: $AUTODOWNLOAD_FILE
       CACHE_DURATION: $CACHE_DURATION
@@ -111,6 +116,7 @@ services:
       - ./images:$IMAGE_DIR
       - ./datasets:$DATASET_DIR
       - ./out:$OUT_DIR
+      - ./system:$SYSTEM_DIR
       - ./client:/app
     
   nginx_flask:
