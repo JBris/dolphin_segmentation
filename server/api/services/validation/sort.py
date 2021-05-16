@@ -1,20 +1,23 @@
+import os
+
+from api.services.content_type import FileFormat
 from api.services.validation.validator_base import ValidatorBase 
 
 from enum import Enum, unique
 
 permitted_format =  {
-    "task": "task name",
+    "file": "task file",
     "format": "csv | json",
-    "out": "output/path"
+    "out": "output/directory"
 }
 
 @unique
-class FileDownloadKeys(Enum):
-    TASK = "task"
+class FileSortKeys(Enum):
+    FILE = "file"
     FORMAT = "format"
     OUT = "out"
 
-class FileDownloadValidator(ValidatorBase):
+class FileSortValidator(ValidatorBase):
     def __init__(self):
         self.error_message = {
             "error": "1", 
@@ -27,8 +30,12 @@ class FileDownloadValidator(ValidatorBase):
     def validate(self, request):
         data = request.get_json()
         if data is None: return None
-        
-        for key in FileDownloadKeys:
+        for key in FileSortKeys:
             if key.value not in data: return None
-            
+        if data["format"] not in [item.value for item in FileFormat]: return None
+
+        del self.error_message["permitted format"]
+        self.message = f"Invalid file has been provided: {data['file']}"
+        if not os.path.isfile(data["file"]): return None
+
         return data

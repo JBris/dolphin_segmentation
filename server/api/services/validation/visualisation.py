@@ -2,8 +2,21 @@ import os
 import pandas as pd
 
 from api.services.content_type import FileFormat
-from api.services.file_visualisation import permitted_format, FileVisualisationKeys
 from api.services.validation.validator_base import ValidatorBase 
+
+from enum import Enum, unique
+
+permitted_format =  {
+    "file": "input/file.",
+    "format": "csv | json",
+    "method": "umap"
+}
+
+@unique
+class FileVisualisationKeys(Enum):
+    FILE = "file"
+    FORMAT = "format"
+    METHOD = "method"
 
 class FileVisualisationValidator(ValidatorBase):
     def __init__(self):

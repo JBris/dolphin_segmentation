@@ -7,10 +7,12 @@ file_api = Blueprint('file', __name__, url_prefix = "/file")
 from api.services.content_type import ContentType
 from api.services.deletion import Deletion
 from api.services.serializer import Serializer
+from api.services.sort import Sort
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.validation.visualisation import FileVisualisationValidator, FilePathValidator as FileVisualisationPathValidator
 from api.services.validation.delete import FileDeletionValidator
 from api.services.validation.download import FileDownloadValidator
+from api.services.validation.sort import FileSortValidator
 from api.visualisation.visualisation import Visualisation
 
 @file_api.route('/select', methods=['POST'])
@@ -97,6 +99,22 @@ def file_visualisation_by_file():
 
     plot = visualisation.visualise(data["method"], data["data"])
     return jsonify(plot)
+
+@file_api.route('/sort', methods=['POST'])
+def file_sort():
+    validator = FileSortValidator()
+    data = validator.validate(request)
+    if data is None: return jsonify(validator.get_error_message()), 400 
+
+    content_type = ContentType()
+    if not content_type.validate(data["format"]): return jsonify({"error": "1", "message": f"File format not supported: {data['format']}."}), 400 
+
+    validator = FileVisualisationPathValidator()
+    data = validator.validate(data)
+    if data is None: return jsonify(validator.get_error_message()), 400 
+
+    sort_res = Sort().sort(data["data"], data["out"])
+    return jsonify(sort_res)
 
 @file_api.route('/delete', methods=['DELETE'])
 def file_delete():
