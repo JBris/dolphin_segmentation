@@ -169,8 +169,7 @@ import config from '../../config'
           return this.config
         }
         try {
-            let configuration = await config.get()
-            configuration = config.setHosts(configuration)
+            const configuration = await config.get(this.$store.state.SERVER_HOST)
             this.config = configuration
             this.error = false
         } catch (e) { this.error = true }
@@ -178,8 +177,7 @@ import config from '../../config'
       },
       async confirm() {
         this.loading = true
-        let configuration = await config.confirm(this.config)
-        configuration = config.setHosts(configuration)
+        const configuration = await config.confirm(this.$store.state.SERVER_HOST, this.config)
         this.config = configuration
         this.loading = false
         this.$buefy.snackbar.open({message: 'Updated options.', duration: 2500, type: "is-success"})
@@ -193,8 +191,7 @@ import config from '../../config'
       },
       async reset() {
         this.loading = true
-        let configuration = await config.reset()
-        configuration = config.setHosts(configuration)
+        const configuration = await config.reset(this.$store.state.SERVER_HOST)
         this.config = configuration
         this.loading = false
         this.$buefy.snackbar.open({message: ' Options reset.', duration: 2500, type: "is-success"})

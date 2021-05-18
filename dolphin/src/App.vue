@@ -32,8 +32,7 @@ export default {
   methods: {
     async getConfig() {
       try {
-        let configuration = await config.get()
-        configuration = config.setHosts(configuration)
+        const configuration = await config.get(this.$store.state.SERVER_HOST)
         this.$store.commit('setConfig', configuration)
         this.error = false
       } catch (e) { this.error = true }

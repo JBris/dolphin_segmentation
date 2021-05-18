@@ -1,4 +1,3 @@
-export const HOST = process.env.VUE_APP_SERVER_HOST
 export const BASE = 'file'
 export const SELECT = `${BASE}/select`
 export const DOWNLOAD = `${BASE}/download`
@@ -7,3 +6,5 @@ export const SORT = `${BASE}/sort`
 export const DELETE = `${BASE}/delete`
 export const CHECK_PROGRESS = `${BASE}/check_progress`
 export const OPTIONS = `${BASE}/options`
+export const IMAGES = `${BASE}/images`
+export const IMAGE = `${BASE}/image`

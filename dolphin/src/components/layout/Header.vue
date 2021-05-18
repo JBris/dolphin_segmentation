@@ -56,12 +56,12 @@ export default {
         },
         tasksUrl: {
             get() {
-                return this.$store.state.config["TASKS_HOST"]
+                return this.$store.state.TASKS_HOST
             }
         },
         notebooksUrl: {
             get() {
-                return this.$store.state.config["NOTEBOOK_HOST"]
+                return this.$store.state.NOTEBOOK_HOST
             }
         },
     }
