@@ -1,15 +1,203 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-  </div>
+  <section>
+    <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
+
+    <section>
+      <b-field grouped label="Modules">
+        <template #label>
+          Modules
+          <b-tooltip type="is-primary" label="Enable and disable application modules.">
+            <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
+          </b-tooltip>
+        </template>
+      <div v-for="(props, key) in config.modules" :key="key">
+        <b-checkbox v-if="props.editable" v-model="props.enabled" type="is-success">{{ props.name }}</b-checkbox>
+        <b-checkbox v-else :value="Boolean(props.enabled)" type="is-success" disabled>{{ props.name }}</b-checkbox>
+      </div>
+    </b-field>
+  </section>
+    
+    <br/>
+
+    <section>
+      <b-field grouped label="Features">
+        <template #label>
+          Features
+          <b-tooltip type="is-primary" label="Enable and disable different features such as image classification and identification.">
+            <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
+          </b-tooltip>
+        </template>
+        <div v-for="(props, key) in config.features" :key="key">
+          <b-checkbox v-if="props.editable" v-model="props.enabled" type="is-success">{{ props.name }}</b-checkbox>
+          <b-checkbox v-else :value="Boolean(props.enabled)" type="is-success" disabled>{{ props.name }}</b-checkbox>
+        </div>
+        </b-field>
+    </section>
+    
+    <br/>
+    
+    <section>
+      <b-field grouped label="Solvers">
+        <template #label>
+          Solvers
+          <b-tooltip type="is-primary" label="Enable and disable image processing solvers for tasks such as identification and classification.">
+            <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
+          </b-tooltip>
+      </template>
+      <div v-for="(props, key) in config.solvers" :key="key">
+        <b-checkbox v-if="props.editable" v-model="props.enabled" type="is-success">{{ props.name }}</b-checkbox>
+        <b-checkbox v-else :value="Boolean(props.enabled)" type="is-success" disabled>{{ props.name }}</b-checkbox>
+      </div>
+      </b-field>
+    </section>
+    
+    <br/>
+
+    <section>
+      <b-field horizontal  label="Cache Duration">
+      <template #label>
+        Cache Duration
+        <b-tooltip type="is-primary" label="The default cache duration (in seconds) for processed datasets">
+          <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
+        </b-tooltip>
+      </template>
+      <b-numberinput min="1" max="999999" v-model="config.cache_duration_default"  type="is-success"></b-numberinput>
+    </b-field>
+    </section>
+
+    <br/>
+
+    <section>
+      <b-field>
+        <b-checkbox v-model="config.autodownload_default" type="is-success">
+            Autodownload Datasets
+        </b-checkbox>
+        <b-tooltip label="Automatically download datasets upon pipeline step completion." position="is-right" type="is-primary">
+            <b-icon
+            :type="{'is-success' : true}"
+            class="help-icon"
+            icon="help-circle-outline"
+            size="is-small">
+          </b-icon>
+        </b-tooltip>
+      </b-field>
+
+      <b-field>
+        <b-checkbox v-model="config.hide_tasks" type="is-success">
+            Hide Tasks
+        </b-checkbox>
+        <b-tooltip label="Hide the tasks option in the header bar." position="is-right" type="is-primary">
+          <b-icon
+            :type="{'is-success' : true}"
+            class="help-icon"
+            icon="help-circle-outline"
+            size="is-small">
+          </b-icon>
+        </b-tooltip>
+      </b-field>
+
+      <b-field>
+        <b-checkbox v-model="config.hide_notebooks" type="is-success">
+             Hide Notebooks
+        </b-checkbox>
+        <b-tooltip label="Hide the notebooks option in the header bar." position="is-right" type="is-primary">
+          <b-icon
+            :type="{'is-success' : true}"
+            class="help-icon"
+            icon="help-circle-outline"
+            size="is-small">
+          </b-icon>
+        </b-tooltip>
+      </b-field>
+    </section>
+
+    <br/>
+
+    <section>
+      <div class="buttons">
+        <b-button type="is-success"
+          v-on:click="confirm"
+          icon-left="check">
+            Confirm
+          </b-button>
+
+          <b-button type="is-danger"
+            v-on:click="cancel"
+            icon-left="close">
+              Cancel
+          </b-button>
+
+          <b-button type="is-primary"
+            v-on:click="reset"
+            icon-left="refresh">
+              Reset
+          </b-button>
+
+      </div>
+    </section>
+  </section>
 </template>
 
 <script>
+import config from '../../config'
+
   export default {
     name: 'Options',
-    data () {
-      return {
-        msg: 'Options'
+    data() {
+        return {
+          loading: true,
+          error: false,
+        }
+      },
+    computed: {
+        config: {
+            get() {
+                return this.$store.state.config
+            },
+            set(config) {
+              this.$store.commit('setConfig', config)
+            }
+        },
+    },
+    mounted() {
+      this.getConfig()
+    },
+    methods: {
+      async getConfig() {
+        if(Object.keys(this.config).length) {
+          this.loading = false
+          return this.config
+        }
+        try {
+            let configuration = await config.get()
+            configuration = config.setHosts(configuration)
+            this.config = configuration
+            this.error = false
+        } catch (e) { this.error = true }
+        this.loading = false
+      },
+      async confirm() {
+        this.loading = true
+        let configuration = await config.confirm(this.config)
+        configuration = config.setHosts(configuration)
+        this.config = configuration
+        this.loading = false
+        this.$buefy.snackbar.open({message: 'Updated options.', duration: 2500, type: "is-success"})
+      },
+      cancel() {
+        this.loading = true
+        setTimeout(() => {
+          this.loading = false
+          this.$router.push("/")
+        }, 250);
+      },
+      async reset() {
+        this.loading = true
+        let configuration = await config.reset()
+        configuration = config.setHosts(configuration)
+        this.config = configuration
+        this.loading = false
+        this.$buefy.snackbar.open({message: ' Options reset.', duration: 2500, type: "is-success"})
       }
     }
   }

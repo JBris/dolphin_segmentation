@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
     <Header/>
     <Body/>
     <Footer/>

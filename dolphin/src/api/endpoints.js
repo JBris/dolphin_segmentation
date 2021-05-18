@@ -1,3 +1,4 @@
+export const HOST = process.env.VUE_APP_SERVER_HOST
 export const BASE = 'file'
 export const SELECT = `${BASE}/select`
 export const DOWNLOAD = `${BASE}/download`

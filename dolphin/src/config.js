@@ -1,10 +1,17 @@
 import client from './api/http/client'
-import { OPTIONS } from './api/endpoints'
+import { HOST, OPTIONS } from './api/endpoints'
 
 class Config {
     async get(){ 
-        const host = process.env.VUE_APP_SERVER_HOST
-        return client.get(`${host}/${OPTIONS}`)
+        return client.get(`${HOST}/${OPTIONS}`)
+    }
+
+    async confirm(config) {
+        return client.put(`${HOST}/${OPTIONS}`, config)
+    }
+
+    async reset() {
+        return client.post(`${HOST}/${OPTIONS}`)
     }
 
     setHosts(config) {

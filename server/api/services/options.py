@@ -10,43 +10,43 @@ default_options = {
     "modules": {
         "dolphin": {
             "name": "Dolphin",
-            "enabled": 1,
-            "editable": 0
+            "enabled": True,
+            "editable": False
         },
     },
     "features": {
         "segmentation": {
             "name": "Segmentation",
-            "enabled": 1,
-            "editable": 0
+            "enabled": True,
+            "editable": False
         },
         "classification": {
             "name": "Classification",
-            "enabled": 1,
-            "editable": 0
+            "enabled": True,
+            "editable": True
         },
         "identification": {
             "name": "Identification",
-            "enabled": 1,
-            "editable": 0
+            "enabled": True,
+            "editable": False
         }
     },
     "solvers": {
         "triplet_loss": {
             "name": "Triplet Loss",
-            "enabled": 1,
-            "editable": 0
+            "enabled": True,
+            "editable": False
         },
         "umap": {
             "name": "UMAP",
-            "enabled": 0,
-            "editable": 1
+            "enabled": False,
+            "editable": True
         }
     },
-    "autodownload_default": config('AUTODOWNLOAD_FILE', default = 1, cast = int),
+    "autodownload_default": config('AUTODOWNLOAD_FILE', default = True, cast = bool),
     "cache_duration_default": config('CACHE_DURATION', default = 86400, cast = int),
-    "hide_tasks": 0,
-    "hide_notebooks": 0
+    "hide_tasks": False,
+    "hide_notebooks": False
 }
 
 class Options:

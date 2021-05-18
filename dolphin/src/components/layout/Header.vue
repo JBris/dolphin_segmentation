@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <b-navbar fixed-top=true centered=true shadow=true spaced=true>
+        <b-navbar :fixed-top="true" :centered="true" :shadow="true" :spaced="true">
             <template #start>
                 <b-navbar-item tag="router-link" :to="{ name: 'Home' }">
                     <b-icon
@@ -23,10 +23,10 @@
                 <b-navbar-item tag="router-link" :to="{ name: 'Pipelines' }">
                     Pipelines
                 </b-navbar-item>
-                <b-navbar-item :href="tasksUrl" target="_blank" rel="noopener noreferrer">
+                <b-navbar-item v-if="!config.hide_tasks" :href="tasksUrl" target="_blank" rel="noopener noreferrer">
                     Tasks
                 </b-navbar-item>
-                <b-navbar-item :href="notebooksUrl" target="_blank" rel="noopener noreferrer">
+                <b-navbar-item v-if="!config.hide_notebooks" :href="notebooksUrl" target="_blank" rel="noopener noreferrer">
                     Notebooks
                 </b-navbar-item>
             </template>
@@ -49,6 +49,11 @@
 export default {
     name:"Header",
     computed: {
+        config: {
+            get() {
+                return this.$store.state.config
+            }
+        },
         tasksUrl: {
             get() {
                 return this.$store.state.config["TASKS_HOST"]
@@ -58,7 +63,7 @@ export default {
             get() {
                 return this.$store.state.config["NOTEBOOK_HOST"]
             }
-        }
+        },
     }
 }
 </script>
