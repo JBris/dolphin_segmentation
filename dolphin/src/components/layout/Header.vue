@@ -2,14 +2,26 @@
     <div class="container">
         <b-navbar fixed-top=true centered=true shadow=true spaced=true>
             <template #start>
-                <b-navbar-item href="#">
+                <b-navbar-item tag="router-link" :to="{ name: 'Home' }">
+                    <b-icon
+                        pack="fas"
+                        :type="{'is-success' : true}"
+                        class="header-icon"
+                        icon="home">
+                    </b-icon>
+                    Home
+                </b-navbar-item>
+                <b-navbar-item tag="router-link" :to="{ name: 'Images' }">
                     Images
                 </b-navbar-item>
-                <b-navbar-item href="#">
+                <b-navbar-item tag="router-link" :to="{ name: 'Datasets' }">
                     Datasets
                 </b-navbar-item>
-                <b-navbar-item href="#">
-                    Workflows
+                <b-navbar-item tag="router-link" :to="{ name: 'Outputs' }">
+                    Outputs
+                </b-navbar-item>
+                <b-navbar-item tag="router-link" :to="{ name: 'Pipelines' }">
+                    Pipelines
                 </b-navbar-item>
                 <b-navbar-item :href="tasksUrl" target="_blank" rel="noopener noreferrer">
                     Tasks
@@ -19,13 +31,13 @@
                 </b-navbar-item>
             </template>
             <template #end>
-                <b-navbar-item href="#">
-                <b-icon
-                    pack="fas"
-                    :type="{'is-success' : true}"
-                    class="options-icon"
-                    icon="cog">
-                </b-icon>
+                <b-navbar-item tag="router-link" :to="{ name: 'Options' }">
+                    <b-icon
+                        pack="fas"
+                        :type="{'is-success' : true}"
+                        class="header-icon"
+                        icon="cog">
+                    </b-icon>
                     Options
                 </b-navbar-item>
             </template>
@@ -57,9 +69,8 @@ export default {
     border: 0.025em solid hsl(171, 100%, 41%);
 }
 
-.options-icon {
-    padding-left: 2.5vw;
-    padding-right: 2.5vw;
+.header-icon {
+    padding-left: 1.5vw;
+    padding-right: 1.5vw;
 }
-
 </style>

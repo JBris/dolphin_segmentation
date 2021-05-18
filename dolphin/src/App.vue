@@ -1,22 +1,22 @@
 <template>
   <div id="app">
     <Header/>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Body/>
     <Footer/>
   </div>
 </template>
 
 <script>
 import Header from './components/layout/Header';
+import Body from './components/body/Body';
 import Footer from './components/layout/Footer';
-import HelloWorld from './components/HelloWorld.vue'
 import config from './config'
 
 export default {
   name: 'App',
   components: {
     Header,
-    HelloWorld,
+    Body,
     Footer
   },
   data() {
@@ -31,10 +31,8 @@ export default {
   methods: {
     async getConfig() {
       try {
-        const configuration = await config.get()
-        configuration["SERVER_HOST"] = process.env.VUE_APP_SERVER_HOST
-        configuration["NOTEBOOK_HOST"] = process.env.VUE_APP_NOTEBOOK_HOST
-        configuration["TASKS_HOST"] = process.env.VUE_APP_TASKS_HOST
+        let configuration = await config.get()
+        configuration = config.setHosts(configuration)
         this.$store.commit('setConfig', configuration)
         this.error = false
       } catch (e) { this.error = true }
