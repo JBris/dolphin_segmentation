@@ -43,6 +43,8 @@ pyviz-comms==2.0.1
 PyYAML==5.4.1
 scikit-image==0.18.1
 Send2Trash==1.5.0
+tensorflow-addons==0.13.0
+tensorflow-datasets==4.3.0
 termcolor==1.1.0
 testpath==0.4.4
 umap-learn==0.5.1
