@@ -1,5 +1,5 @@
 import client from '@/api/http/client'
-import { COPY } from '@/api/endpoints'
+import { COPY, DELETE } from '@/api/endpoints'
 
 class File {    
     async copy(host, inPAth, inFormat, outPath, outFormat) {
@@ -9,6 +9,10 @@ class File {
             out: outPath,
             out_format: outFormat
         })
+    }
+
+    async delete(host, files) {
+        return client.delete(`${host}/${DELETE}`, {files})
     }
 }
 

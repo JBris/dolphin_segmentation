@@ -7,19 +7,19 @@
             <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
 
                 <b-tab-item label="Copy" icon="folder-swap">
-                    <CopyForm v-bind:file="file" v-if="activeTab == 0" />
+                    <CopyForm v-bind:file="file" v-if="activeTab == 0" v-on:update_file_list="updateFileList()"/>
                 </b-tab-item>
 
                 <b-tab-item label="Visualise" icon="chart-line">
-                    <VisualiseForm v-bind:file="file" v-if="activeTab == 1" />
+                    <VisualiseForm v-bind:file="file" v-if="activeTab == 1" v-on:update_file_list="updateFileList()"/>
                 </b-tab-item>
 
                 <b-tab-item label="Sort" icon="sort">
-                    <SortForm v-bind:file="file" v-if="activeTab == 2" />
+                    <SortForm v-bind:file="file" v-if="activeTab == 2" v-on:update_file_list="updateFileList()"/>
                 </b-tab-item>
 
                 <b-tab-item label="Delete" icon="delete">
-                    <DeleteForm v-bind:file="file" v-if="activeTab == 3" />
+                    <DeleteForm v-bind:file="file" v-if="activeTab == 3" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
                 </b-tab-item>
 
             </b-tabs>
@@ -57,6 +57,11 @@ export default {
     data() {
         return {
             activeTab: 0,
+        }
+    },
+    methods: {
+        updateFileList() {
+            this.$emit("update_file_list")
         }
     }
 }

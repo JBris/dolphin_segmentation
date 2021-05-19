@@ -15,6 +15,11 @@ class Client {
         if (asJson) return axios.post(url, body).then(res => res.data)
         else return axios.post(url, body)
     }
+
+    async delete(url, body = {}, asJson = true) {
+        if (asJson) return axios.delete(url, {data: body}).then(res => res.data)
+        else return axios.delete(url, {data: body})
+    }
 }
 
 const client = new Client()

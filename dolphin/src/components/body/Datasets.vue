@@ -88,8 +88,8 @@ export default {
     this.getFileList()
   },
   methods: {
-    async getFileList(datasetDir = this.$store.state.DATASET_DIR) {
-      this.loading = true
+    async getFileList(datasetDir = this.$store.state.DATASET_DIR, loading = true) {
+      this.loading = loading
       try {
         this.datasetDir = datasetDir
         this.fileList = await collection.getAll(this.$store.state.SERVER_HOST, DATASETS, this.datasetDir)
@@ -114,7 +114,10 @@ export default {
         hasModalCard: true,
         customClass: 'custom-class custom-class-2',
         trapFocus: true,
-        fullScreen: true
+        fullScreen: true,
+        events: {
+          update_file_list: () => this.getFileList(this.$store.state.DATASET_DIR, false)
+        }
       })
     }
   }

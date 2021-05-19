@@ -70,6 +70,7 @@ export default {
             await file.copy(this.$store.state.SERVER_HOST, this.file.file, this.file.type, this.destination, this.currentFormat )
             this.loading = false
             this.$buefy.snackbar.open({message: `File copied to ${this.destination}`, duration: 2500, type: "is-success", position: "is-bottom"})
+            this.$emit("update_file_list")
         }
     }
 }
