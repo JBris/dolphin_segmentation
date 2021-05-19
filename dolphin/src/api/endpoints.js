@@ -8,3 +8,4 @@ export const CHECK_PROGRESS = `${BASE}/check_progress`
 export const OPTIONS = `${BASE}/options`
 export const IMAGES = `${BASE}/images`
 export const IMAGE = `${BASE}/image`
+export const DATASETS = `${BASE}/datasets`

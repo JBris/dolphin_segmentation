@@ -180,7 +180,7 @@ import config from '../../config'
         const configuration = await config.confirm(this.$store.state.SERVER_HOST, this.config)
         this.config = configuration
         this.loading = false
-        this.$buefy.snackbar.open({message: 'Updated options.', duration: 2500, type: "is-success"})
+        this.$buefy.snackbar.open({message: 'Updated options.', duration: 2500, type: "is-success", position: "is-bottom-left"})
       },
       cancel() {
         this.loading = true
@@ -194,7 +194,7 @@ import config from '../../config'
         const configuration = await config.reset(this.$store.state.SERVER_HOST)
         this.config = configuration
         this.loading = false
-        this.$buefy.snackbar.open({message: ' Options reset.', duration: 2500, type: "is-success"})
+        this.$buefy.snackbar.open({message: 'Options reset.', duration: 2500, type: "is-success", position: "is-bottom-left"})
       }
     }
   }

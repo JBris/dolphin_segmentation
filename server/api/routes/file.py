@@ -6,12 +6,14 @@ from flask import Blueprint, request, jsonify, current_app, url_for, make_respon
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
 from api.services.content_type import ContentType
+from api.services.dataset import Dataset
 from api.services.deletion import Deletion
 from api.services.image import Image
 from api.services.serializer import Serializer
 from api.services.sort import Sort
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.validation.visualisation import FileVisualisationValidator, FilePathValidator as FileVisualisationPathValidator
+from api.services.validation.copy import FileCopyValidator
 from api.services.validation.delete import FileDeletionValidator
 from api.services.validation.download import FileDownloadValidator
 from api.services.validation.sort import FileSortValidator
@@ -108,15 +110,27 @@ def file_sort():
     data = validator.validate(request)
     if data is None: return jsonify(validator.get_error_message()), 400 
 
-    content_type = ContentType()
-    if not content_type.validate(data["format"]): return jsonify({"error": "1", "message": f"File format not supported: {data['format']}."}), 400 
-
     validator = FileVisualisationPathValidator()
     data = validator.validate(data)
     if data is None: return jsonify(validator.get_error_message()), 400 
 
     sort_res = Sort().sort(data["data"], data["out"])
     return jsonify(sort_res)
+
+@file_api.route('/copy', methods=['POST'])
+def file_copy():
+    validator = FileCopyValidator()
+    data = validator.validate(request)
+    if data is None: return jsonify(validator.get_error_message()), 400 
+    
+    content_type = ContentType()
+    df, out = content_type.write_df_to_out(data["data"], data["out"], data["out_format"])
+
+    return jsonify({
+        "status": "complete",
+        "in": data["in"],
+        "out": out
+    })
 
 @file_api.route('/delete', methods=['DELETE'])
 def file_delete():
@@ -159,6 +173,18 @@ def file_view_images():
     if not os.path.isdir(data["path"]): return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
 
     processed_directory = Image().process_directory(data["path"])
+    return jsonify(processed_directory)
+
+@file_api.route('/datasets', methods=['POST'])
+def file_view_datasets():
+    data = request.get_json()
+    error_message = "Invalid dataset path provided."
+    permitted_format =  { "path": "/dataset/path"}
+    if data is None: return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+    if "path" not in data: return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+    if not os.path.isdir(data["path"]): return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+
+    processed_directory = Dataset().process_directory(data["path"])
     return jsonify(processed_directory)
 
 @file_api.route('/image/<path:path>', methods=['GET'])

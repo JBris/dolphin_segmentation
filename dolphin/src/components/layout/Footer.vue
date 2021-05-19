@@ -2,7 +2,7 @@
     <footer class="footer">
         <div class="container">
             <div class="content">
-                <p>Made by <a href="https://www.linkedin.com/in/james-bristow-nz/" target="_blank">James Bristow</a> & <a href="https://www.linkedin.com/in/james-bristow-nz/" target="_blank">Martin Brenner</a></p>
+                <p>Created by <a href="https://www.linkedin.com/in/james-bristow-nz/" target="_blank">James Bristow</a> & <a href="https://www.linkedin.com/in/james-bristow-nz/" target="_blank">Martin Brenner</a></p>
                 <p>
                     <small>
                         The source code is licensed under <a href="http://opensource.org/licenses/mit-license.php" target="_blank">MIT</a>.

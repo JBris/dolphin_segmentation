@@ -24,6 +24,13 @@ class ContentType:
         if format == FileFormat.JSON.value: return df.to_json(out, orient="records"), out
         raise NotImplementedError(f"Format type unsupported: {format}")
 
+    def write_df_to_out(self, df, out, format):
+        parent = Path(out).parent
+        Path(parent).mkdir(parents = True, exist_ok = True)
+        if format == FileFormat.CSV.value: return df.to_csv(out, index = False, encoding='utf-8'), out
+        if format == FileFormat.JSON.value: return df.to_json(out, orient="records"), out
+        raise NotImplementedError(f"Format type unsupported: {format}")
+
     def get_content_type(self, format):
         if format == FileFormat.CSV.value: return f"text/{format}"
         if format == FileFormat.JSON.value: return f"application/{format}"
