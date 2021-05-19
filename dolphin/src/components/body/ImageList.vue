@@ -3,7 +3,7 @@
       <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
       <p v-if="!this.fileList.length && !this.loading">No images currently available.</p>
       <div v-else>
-      <section class="image-dir-path">
+      <section class="image-dir-path level-left">
         <a v-for="(dir, index) in imageDirList" :key=index @click="getFileList(joinImageDirList(imageDirList, index))">
           /{{dir}}
         </a>         
