@@ -1,11 +1,13 @@
 import celery.states as states
+import os
 
-from flask import Blueprint, request, jsonify, current_app, url_for, make_response
+from flask import Blueprint, request, jsonify, current_app, url_for, make_response, send_file
 
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
 from api.services.content_type import ContentType
 from api.services.deletion import Deletion
+from api.services.image import Image
 from api.services.serializer import Serializer
 from api.services.sort import Sort
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
@@ -146,6 +148,22 @@ def file_check_progress(task_id: str):
             res["substep_total"] = job.result['substep_total']
         return jsonify(res), 202 
     else: return jsonify({"status": "error"}), 500
+
+@file_api.route('/images', methods=['POST'])
+def file_view_images():
+    data = request.get_json()
+    error_message = "Invalid image path provided."
+    permitted_format =  { "path": "/image/path"}
+    if data is None: return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+    if "path" not in data: return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+    if not os.path.isdir(data["path"]): return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+
+    processed_directory = Image().process_directory(data["path"])
+    return jsonify(processed_directory)
+
+@file_api.route('/image/<path:path>', methods=['GET'])
+def file_view_image(path):
+    return send_file(f"/{path}")
 
 @file_api.route('/options', methods=['GET', 'POST', 'PUT'])
 def file_options():
