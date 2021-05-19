@@ -12,17 +12,6 @@
             <b-input v-model="destination"></b-input>
         </b-field>
 
-        <b-field label="Format" type="is-success">
-              <template #label>
-                <h3 class="group-header">Format
-                    <b-tooltip type="is-primary" position="is-right" label="The format of the copied file.">
-                        <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
-                    </b-tooltip>
-                </h3>
-            </template>
-            <b-autocomplete v-model="currentFormat" @select="onSelect" open-on-focus :data="permittedFileFormats">
-            </b-autocomplete>
-        </b-field>
         <br/>
         <section>
             <div class="buttons">
@@ -47,9 +36,6 @@ export default {
             required: true
         },
     },
-    computed: {
-        permittedFileFormats() { return this.$store.state.permittedFileFormats }
-    },
     data() {
         return {
             loading: false,
@@ -58,8 +44,7 @@ export default {
         }
     },
     mounted() {
-        this.currentFormat = this.permittedFileFormats[0]
-        this.destination = `${this.file.file.split('.').slice(0, -1).join('.')}_copy.${this.currentFormat}`
+        this.destination = `${this.$store.state.OUT_DIR}/${this.file.file.substring(this.file.file.lastIndexOf("/") + 1)}`
     },
     methods: {
         onSelect(format) {
@@ -67,7 +52,7 @@ export default {
         },
         async confirm() {
             this.loading = true
-            await file.copy(this.$store.state.SERVER_HOST, this.file.file, this.file.type, this.destination, this.currentFormat )
+            await file.copy(this.$store.state.SERVER_HOST, this.file.file, this.destination )
             this.loading = false
             this.$buefy.snackbar.open({message: `File copied to ${this.destination}`, duration: 2500, type: "is-success", position: "is-bottom"})
             this.$emit("update_file_list")

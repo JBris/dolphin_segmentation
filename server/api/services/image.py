@@ -1,6 +1,8 @@
 import io
 import os
 import PIL.Image
+import tarfile
+import zipfile
 
 from base64 import encodebytes
 from pathlib import Path
@@ -22,6 +24,11 @@ class Image:
 
     def classify_file(self, path, name):
         if os.path.isdir(path): return { "type": "dir", "file": path, "name": name }
+        if zipfile.is_zipfile(path): return { "type": "archive", "file": path, "name": name }
+        try: 
+            if tarfile.is_tarfile(path): return { "type": "archive", "file": path, "name": name }
+        except: None
+
         image = self.check_valid_image(path)  
         if not image: return False
         return {"type": "image", "file": path, "name": name }

@@ -1,9 +1,0 @@
-ARG NODE_TAG
-
-FROM node:${NODE_TAG}
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-
-CMD ["npm", "run", "serve"]

@@ -7,19 +7,21 @@
         :lazy="true"
         class="image is-64x64 is-inline-block"
       ></b-image>
+
       <b-image
         v-if="file.type == 'dir'"
         :src="require('@/assets/images/folder.png')"
         class="image is-64x64 is-inline-block"
         ></b-image>
+
+        <b-image
+        v-if="file.type == 'archive'"
+        :src="require('@/assets/images/archive.jpg')"
+        class="image is-64x64 is-inline-block"
+        ></b-image>
+
       <p>{{file.name}}</p>
     </div>
-    
-    <b-modal v-if="file.type == 'image' && isImageModalActive" v-model="isImageModalActive">
-      <p class="image is-4by3">
-        <img :src="`${imagePath}/${file.file}`">
-      </p>
-    </b-modal>
   </section>
 </template>
 
@@ -45,7 +47,7 @@ export default {
   methods: {
     onSelect (file) {
       if(file.type == "dir") { this.$emit('dir_selected', file); }
-      if(file.type == "image") { this.isImageModalActive = !this.isImageModalActive ; }
+      else { this.$emit('file_selected', file); }
     }
   }
 }

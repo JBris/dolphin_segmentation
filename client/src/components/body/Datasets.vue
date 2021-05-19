@@ -1,54 +1,48 @@
 <template>
-  <content>
-    <section class="image-dir-path level-left">
-      <a v-for="(dir, index) in datasetDirList" :key=index @click="getFileList(joinDatasetDirList(datasetDirList, index))">
-        /{{dir}}
-      </a>         
-    </section>
-    <div class="tile is-ancestor">
-      <div class="tile is-3 is-vertical is-parent">
-        <div class="tile is-child">
-          <b-field>
-              <b-autocomplete
-                  v-model="fileName"
-                  group-field="type"
-                  field="file"
-                  icon="magnify"
-                  @select="option => selectFile(option)"
-                  :data="filteredFiles">
-                  <template slot-scope="props">
-                    <div class="media">
-                        <div class="media-left">
-                            <img width="32" :src="require(`@/assets/images/${props.option.type}.png`)">
-                        </div>
-                        <div class="media-content">
-                            {{ props.option.name}}
-                        </div>
-                    </div>
-                </template>
-              </b-autocomplete>
-          </b-field>
+    <content>
+        <div class="columns">
+            <div class="column">
+                <section class="image-dir-path level-left">
+                    <a v-for="(dir, index) in datasetDirList" :key=index
+                        @click="getFileList(joinDatasetDirList(datasetDirList, index))">
+                        /{{dir}}
+                    </a>
+                </section>
+            </div>
+            <div class="column is-half">
+                <b-field>
+                    <b-autocomplete v-model="fileName" group-field="type" field="file" icon="magnify"
+                        @select="option => selectFile(option)" :data="filteredFiles">
+                        <template slot-scope="props">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img width="32" :src="require(`@/assets/images/${props.option.type}.png`)">
+                                </div>
+                                <div class="media-content">
+                                    {{ props.option.name}}
+                                </div>
+                            </div>
+                        </template>
+                    </b-autocomplete>
+                </b-field>
+            </div>
         </div>
-      </div>
-      <div class="tile is-vertical is-parent">
-        <div class="tile is-child">
-          <section>
+        <section>
             <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
             <p v-if="!this.fileList.length && !this.loading">No datasets currently available.</p>
             <div v-else>
-            <section class="image-dir-path">
-              <div class="columns is-multiline">
-                <div v-for="(file, index) in fileList" :key=index class="column is-one-fifth  has-text-centered">
-                  <DatasetItem v-bind:file="file" v-bind:datasetPath="datasetPath" v-on:dir_selected="changeDir(file)" v-on:file_selected="selectFile(file)" />
-                </div>
-              </div>  
-              </section>    
+                <section class="image-dir-path">
+                    <div class="columns is-multiline">
+                        <div v-for="(file, index) in fileList" :key=index
+                            class="column is-one-fifth  has-text-centered">
+                            <DatasetItem v-bind:file="file" v-bind:datasetPath="datasetPath"
+                                v-on:dir_selected="changeDir(file)" v-on:file_selected="selectFile(file)" />
+                        </div>
+                    </div>
+                </section>
             </div>
-          </section>          
-        </div>
-      </div>
-    </div>
-  </content>
+        </section>
+    </content>
 </template>
 
 <script>
@@ -58,7 +52,7 @@ import DatasetItem from '@/components/body/DatasetItem'
 import DatasetForm from '@/components/forms/DatasetForm'
 
 export default {
-  name: 'ImageList',
+  name: 'Datasets',
   components: {
     DatasetItem
   },
@@ -112,7 +106,6 @@ export default {
           file
         },
         hasModalCard: true,
-        customClass: 'custom-class custom-class-2',
         trapFocus: true,
         fullScreen: true,
         events: {

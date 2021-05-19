@@ -1,5 +1,5 @@
 {
-  "name": "dolphin_segmentation",
+  "name": "dolphin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,21 +8,23 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@bokeh/bokehjs": "^2.3.1",
+    "@bokeh/bokehjs": "^2.3.2",
+    "axios": "^0.21.1",
+    "buefy": "^0.9.7",
     "core-js": "^3.6.5",
-    "got": "^11.8.2",
-    "vue": "^3.0.0",
+    "vue": "^2.6.11",
     "vue-router": "^3.5.1",
+    "vuetify": "^2.5.0",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
     "root": true,
@@ -30,7 +32,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/vue3-essential",
+      "plugin:vue/essential",
       "eslint:recommended"
     ],
     "parserOptions": {

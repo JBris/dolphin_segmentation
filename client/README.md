@@ -1,4 +1,4 @@
-# dolphin_segmentation
+# dolphin
 
 ## Project setup
 ```

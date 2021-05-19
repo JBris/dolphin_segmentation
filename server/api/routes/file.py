@@ -1,11 +1,12 @@
 import celery.states as states
 import os
 
-from flask import Blueprint, request, jsonify, current_app, url_for, make_response, send_file
+from flask import Blueprint, json, request, jsonify, current_app, url_for, make_response, send_file
 
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
 from api.services.content_type import ContentType
+from api.services.copy import Copy
 from api.services.dataset import Dataset
 from api.services.deletion import Deletion
 from api.services.image import Image
@@ -119,6 +120,26 @@ def file_sort():
 
 @file_api.route('/copy', methods=['POST'])
 def file_copy():
+    data = request.get_json()
+    error_message = {"error": 1, "message": "Invalid request body format.", "permitted format": { "in": "/file/path", "out": "/file/path" }}
+    if data is None: return jsonify(error_message), 400
+    if "in" not in data or "out" not in data: return jsonify(error_message), 400
+    
+    error_message["message"] = "Supplied file does not exist."
+    if not os.path.exists(data["in"]): return jsonify(error_message), 400
+    copy = Copy().copy(data["in"], data["out"])
+
+    error_message["message"] = f"Copy failed: {data['in']}"
+    if copy:
+        return jsonify({
+            "status": "complete",
+            "in": data["in"],
+            "out": data["out"]
+        })
+    else: return jsonify(error_message)
+
+@file_api.route('/copy/data', methods=['POST'])
+def file_copy_data():
     validator = FileCopyValidator()
     data = validator.validate(request)
     if data is None: return jsonify(validator.get_error_message()), 400 
