@@ -55,11 +55,12 @@
 import collection from '@/api/file/collection'
 import { DATASETS } from '@/api/endpoints'
 import DatasetItem from '@/components/body/DatasetItem'
+import DatasetForm from '@/components/forms/DatasetForm'
 
 export default {
   name: 'ImageList',
   components: {
-    DatasetItem,
+    DatasetItem
   },
   data() {
     return {
@@ -67,7 +68,6 @@ export default {
       error: false,
       datasetDir: "",
       fileName: "",
-      selectedFile: null,
       fileList: [],
     }
   },
@@ -92,7 +92,6 @@ export default {
       this.loading = true
       try {
         this.datasetDir = datasetDir
-        console.log(this.datasetDir )
         this.fileList = await collection.getAll(this.$store.state.SERVER_HOST, DATASETS, this.datasetDir)
         this.error = false
       } catch (e) { this.error = true }
@@ -105,13 +104,17 @@ export default {
       return `/${datasetDirList.slice(0, index + 1).join("/")}`
     },
     selectFile(file) {
-      this.fileName = file.file
-      this.selectedFile = file
-      this.$buefy.toast.open({
-        duration: 2000,
-        message: file.file,
-        position: 'is-bottom',
-        type: 'is-success'
+      if(file == null) return;
+      this.$buefy.modal.open({
+        parent: this,
+        component: DatasetForm,
+        props: {
+          file
+        },
+        hasModalCard: true,
+        customClass: 'custom-class custom-class-2',
+        trapFocus: true,
+        fullScreen: true
       })
     }
   }
@@ -119,10 +122,10 @@ export default {
 </script>
 
 <style scoped lang="css">
-.image-dir-path {
-  padding-top: 1.5vh;
-  padding-bottom: 1.5vh;
-}
+  .image-dir-path {
+    padding-top: 1.5vh;
+    padding-bottom: 1.5vh;
+  }
 </style>
 
 
