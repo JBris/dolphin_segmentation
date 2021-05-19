@@ -1,5 +1,5 @@
 import client from '@/api/http/client'
-import { COPY, DELETE } from '@/api/endpoints'
+import { COPY, SORT, DELETE } from '@/api/endpoints'
 
 class File {    
     async copy(host, inPAth, inFormat, outPath, outFormat) {
@@ -8,6 +8,14 @@ class File {
             in_format: inFormat,
             out: outPath,
             out_format: outFormat
+        })
+    }
+
+    async sort(host, inPAth, inFormat, outPath) {
+        return client.post(`${host}/${SORT}`, {
+            file: inPAth,
+            format: inFormat,
+            out: outPath
         })
     }
 

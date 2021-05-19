@@ -1,53 +1,34 @@
 <template>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <h3>{{file.name}}</h3>
-        </header>
-        <section class="modal-card-body">
-            <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
-
-                <b-tab-item label="Copy" icon="folder-swap">
-                    <CopyForm v-bind:file="file" v-if="activeTab == 0" />
-                </b-tab-item>
-
-                <b-tab-item label="Visualise" icon="chart-line">
-                    <VisualiseForm v-bind:file="file" v-if="activeTab == 1" />
-                </b-tab-item>
-
-                <b-tab-item label="Sort" icon="sort">
-                    <SortForm v-bind:file="file" v-if="activeTab == 2" />
-                </b-tab-item>
-
-                <b-tab-item label="Delete" icon="delete">
-                    <DeleteForm v-bind:file="file" v-if="activeTab == 3" />
-                </b-tab-item>
-
-            </b-tabs>
+    <section>
+        <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
+        <b-field label="Destination">
+              <template #label>
+                <h3 class="group-header">Destination
+                    <b-tooltip type="is-primary" position="is-right" label="The destination of the copied file.">
+                        <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
+                    </b-tooltip>
+                </h3>
+            </template>
+            <b-input v-model="destination"></b-input>
+        </b-field>
+        <br/>
+        <section>
+            <div class="buttons">
+                <b-button type="is-success"
+                    v-on:click="confirm"
+                    icon-left="check">
+                    Confirm
+                </b-button>
+            </div>
         </section>
-        <footer class="modal-card-foot">
-          <b-button type="is-primary"
-            label="Close"
-            @click="$parent.close()"
-            icon-left="close">
-          </b-button>
-        </footer>
-    </div>
+    </section>
 </template>
 
 <script>
-import CopyForm from '@/components/forms/dataset/CopyForm'
-import VisualiseForm from '@/components/forms/dataset/VisualiseForm'
-import SortForm from '@/components/forms/dataset/SortForm'
-import DeleteForm from '@/components/forms/dataset/DeleteForm'
+import file from '@/api/file/file'
 
 export default {
-    name: 'DatasetForm',
-    components:{
-        CopyForm,
-        VisualiseForm,
-        SortForm,
-        DeleteForm
-    },
+    name: 'SortForm',
     props: {
         file: {
             type: Object,
@@ -56,27 +37,29 @@ export default {
     },
     data() {
         return {
-            activeTab: 0,
+            loading: false,
+            destination: ""
+        }
+    },
+    mounted() {
+        const fileName = this.file.file.substring(this.file.file.lastIndexOf("/") + 1)
+        this.destination = `${this.$store.state.OUT_DIR}/${fileName.split('.').slice(0, -1).join('.')}`
+    },
+    methods: {
+        async confirm() {
+            this.loading = true
+            await file.sort(this.$store.state.SERVER_HOST, this.file.file, this.file.type, this.destination)
+            this.loading = false
+            this.$buefy.snackbar.open({message: `Files sorted to ${this.destination}`, duration: 2500, type: "is-success", position: "is-bottom"})
+            this.$emit("update_file_list")
         }
     }
 }
 </script>
 
 <style scoped lang="css">
-h3 {
-    color: #2c3e50;
+.group-header {
+  color: #2c3e50;
+  text-align: left;
 }
-
-.modal-card {
-    width: auto;
-}
-
-.modal-card-head {
-    box-shadow: 0.02em 0.02em 1.5px grey;
-    border: 0.02em solid hsl(171, 100%, 41%);
-    background-color: white;
-    height: 7.5vh;
-}
-
 </style>
-
