@@ -113,6 +113,20 @@
           </b-icon>
         </b-tooltip>
       </b-field>
+
+      <b-field>
+        <b-checkbox v-model="config.hide_containers" type="is-success">
+             Hide Containers
+        </b-checkbox>
+        <b-tooltip label="Hide the containers option in the header bar." position="is-right" type="is-primary">
+          <b-icon
+            :type="{'is-success' : true}"
+            class="help-icon"
+            icon="help-circle-outline"
+            size="is-small">
+          </b-icon>
+        </b-tooltip>
+      </b-field>
     </section>
 
     <br/>

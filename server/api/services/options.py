@@ -46,7 +46,8 @@ default_options = {
     "autodownload_default": config('AUTODOWNLOAD_FILE', default = True, cast = bool),
     "cache_duration_default": config('CACHE_DURATION', default = 86400, cast = int),
     "hide_tasks": False,
-    "hide_notebooks": False
+    "hide_notebooks": False,
+    "hide_containers": False
 }
 
 class Options:

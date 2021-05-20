@@ -13,6 +13,7 @@ from api.services.deletion import Deletion
 from api.services.image import Image
 from api.services.serializer import Serializer
 from api.services.sort import Sort
+from api.services.tasks import Tasks
 from api.services.validation.archive import FileArchiveValidator
 from api.services.validation.dataset import FileDatasetValidator
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
@@ -225,6 +226,18 @@ def file_view_datasets():
 
     processed_directory = Dataset().process_directory(data["path"])
     return jsonify(processed_directory)
+
+@file_api.route('/tasks', methods=['POST'])
+def file_view_tasks():
+    data = request.get_json()
+    error_message = "Invalid tasks path provided."
+    permitted_format =  { "path": "/dataset/path"}
+    if data is None: return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+    if "path" not in data: return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+    if not os.path.isdir(data["path"]): return jsonify({"error": 1, "Message": error_message, "permitted format": permitted_format}), 400
+
+    processed_directory = Tasks().process_directory(data["path"])
+    return jsonify(processed_directory)    
 
 @file_api.route('/image/<path:path>', methods=['GET'])
 def file_view_image(path):

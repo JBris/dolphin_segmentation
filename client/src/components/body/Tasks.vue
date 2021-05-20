@@ -1,16 +1,124 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-  </div>
+    <content>
+        <div class="columns">
+            <div class="column">
+                <section class="create-button level-left">
+                  <b-button type="is-success"
+                    v-on:click="create"
+                    icon-left="plus">
+                      Create
+                  </b-button>
+                </section>
+            </div>
+            <div class="column is-half">
+                <b-field>
+                    <b-autocomplete v-model="taskName" field="name" icon="magnify"
+                        @select="option => selectTask(option)" :data="filteredTasks">
+                        <template slot-scope="props">
+                            <div class="media">
+                              <div class="media-content">
+                                  {{ props.option.name}}
+                              </div>
+                            </div>
+                        </template>
+                    </b-autocomplete>
+                </b-field>
+            </div>
+        </div>
+        <section>
+            <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
+            <p v-if="!this.taskList.length && !this.loading">No tasks currently available.</p>
+            <div v-else>
+                <section class="image-dir-path">
+                    <div class="columns is-multiline">
+                        <div v-for="(task, index) in taskList" :key=index
+                            class="column is-one-fifth  has-text-centered">
+                              <TaskItem v-bind:task="task" v-on:task_selected="selectTask(task)"/>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </content>
 </template>
 
 <script>
-  export default {
-    name: 'Tasks',
-    data () {
-      return {
-        msg: 'Tasks'
-      }
+import collection from '@/api/file/collection'
+import { TASKS } from '@/api/endpoints'
+import TaskItem from '@/components/body/TaskItem'
+import TaskCreateForm from '@/components/forms/task/TaskCreateForm'
+import DatasetForm from '@/components/forms/DatasetForm'
+
+export default {
+  name: 'Tasks',
+  components: {
+    TaskItem
+  },
+  data() {
+    return {
+      loading: true,
+      error: false,
+      tasksDir: "",
+      taskName: "",
+      taskList: []
+    }
+  },
+  computed: {
+    filteredTasks() {
+      return this.taskList
+      .filter(task => task.name.toLowerCase().indexOf(this.taskName.toLowerCase()) >= 0)
+    }
+  },
+  mounted() {
+    this.getTaskList()
+  },
+  methods: {
+    async getTaskList(tasksDir = this.$store.state.TASK_DIR, loading = true) {
+      this.loading = loading
+      try {
+        this.tasksDir = tasksDir
+        this.taskList = await collection.getAll(this.$store.state.SERVER_HOST, TASKS, this.tasksDir)
+        this.error = false
+      } catch (e) { this.error = true }
+      this.loading = false
+    },
+    async changeDir(file) {
+      return this.getTaskList(file.file)
+    },
+    create() {
+      this.$buefy.modal.open({
+        parent: this,
+        component: TaskCreateForm,
+        hasModalCard: true,
+        trapFocus: true,
+        fullScreen: true,
+        events: {
+          update_task_list: () => this.getTaskList(this.$store.state.TASK_DIR, false)
+        }
+      })
+    },
+    selectTask(task) {
+      if(task == null) return;
+      this.$buefy.modal.open({
+        parent: this,
+        component: DatasetForm,
+        props: {
+          file: task,
+        },
+        hasModalCard: true,
+        trapFocus: true,
+        fullScreen: true,
+        events: {
+          update_file_list: () => this.getTaskList(this.$store.state.TASK_DIR, false)
+        }
+      })
     }
   }
+}
 </script>
+
+<style scoped lang="css">
+.create-button {
+  padding-bottom: 1.5vh;
+}
+</style>

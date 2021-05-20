@@ -13,3 +13,4 @@ export const IMAGES = `${BASE}/images`
 export const IMAGE = `${BASE}/image`
 export const DATASETS = `${BASE}/datasets`
 export const DATASET_VIEW = `${BASE}/dataset/view`
+export const TASKS = `${BASE}/tasks`

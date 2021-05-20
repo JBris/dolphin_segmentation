@@ -34,10 +34,6 @@ export default {
       type: Object,
       required: true
     },
-    datasetPath: {
-      type: String,
-      required: true
-    }
   },
   methods: {
     onSelect (file) {

@@ -29,6 +29,9 @@
                 <b-navbar-item v-if="!config.hide_notebooks" :href="notebooksUrl" target="_blank" rel="noopener noreferrer">
                     Notebooks
                 </b-navbar-item>
+                <b-navbar-item v-if="!config.hide_containers" :href="containersUrl" target="_blank" rel="noopener noreferrer">
+                    Containers
+                </b-navbar-item>
             </template>
             <template #end>
                 <b-navbar-item tag="router-link" :to="{ name: 'Options' }">
@@ -49,21 +52,10 @@
 export default {
     name:"Header",
     computed: {
-        config: {
-            get() {
-                return this.$store.state.config
-            }
-        },
-        tasksUrl: {
-            get() {
-                return this.$store.state.TASKS_HOST
-            }
-        },
-        notebooksUrl: {
-            get() {
-                return this.$store.state.NOTEBOOK_HOST
-            }
-        },
+        config() {  return this.$store.state.config },
+        tasksUrl() { return this.$store.state.TASKS_HOST },
+        notebooksUrl() { return this.$store.state.NOTEBOOK_HOST },
+        containersUrl() { return this.$store.state.CONTAINERS_HOST }
     }
 }
 </script>

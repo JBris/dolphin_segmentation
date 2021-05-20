@@ -12,6 +12,7 @@ from api.services.options import Options
 from api.services.serializer import Serializer
 
 app = Flask(__name__)
+CORS(app)
 app.config.update(
     CELERY_BROKER_URL = config('CELERY_BROKER_URL', default = 'redis://redis:6379/0'),
     CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default = 'redis://redis:6379/0'),
@@ -24,7 +25,6 @@ app.config["CACHE"] = Cache()
 app.config["OPTIONS"] = Options()
 
 app.register_blueprint(file_api)
-CORS(app)
 
 @app.route('/', methods=['GET'])
 def home():

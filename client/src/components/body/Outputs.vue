@@ -11,7 +11,7 @@
             </div>
             <div class="column is-half">
                 <b-field>
-                    <b-autocomplete v-model="fileName" group-field="type" field="file" icon="magnify"
+                    <b-autocomplete v-model="fileName" group-field="type" field="name" icon="magnify"
                         @select="option => selectFile(option)" :data="filteredFiles">
                         <template slot-scope="props">
                             <div class="media">
@@ -70,7 +70,7 @@ export default {
     },
     filteredFiles() {
       return this.fileList
-      .filter(file => file.file.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
+      .filter(file => file.name.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
     }
   },
   mounted() {

@@ -11,7 +11,7 @@
             </div>
             <div class="column is-half">
                 <b-field>
-                    <b-autocomplete v-model="fileName" group-field="type" field="file" icon="magnify"
+                    <b-autocomplete v-model="fileName" group-field="type" field="name" icon="magnify"
                         @select="option => selectFile(option)" :data="filteredFiles">
                         <template slot-scope="props">
                             <div class="media">
@@ -35,7 +35,7 @@
                     <div class="columns is-multiline">
                         <div v-for="(file, index) in fileList" :key=index
                             class="column is-one-fifth  has-text-centered">
-                            <DatasetItem v-bind:file="file" v-bind:datasetPath="datasetPath"
+                            <DatasetItem v-bind:file="file"
                                 v-on:dir_selected="changeDir(file)" v-on:file_selected="selectFile(file)" />
                         </div>
                     </div>
@@ -66,16 +66,13 @@ export default {
     }
   },
   computed: {
-    datasetPath() {
-      return `${this.$store.state.SERVER_HOST}/${DATASETS}`
-    },
     datasetDirList() {
       return this.datasetDir.split("/").filter(ele => ele != "")
     },
     filteredFiles() {
       return this.fileList
       .filter(file => file.type != "dir")
-      .filter(file => file.file.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
+      .filter(file => file.name.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
     }
   },
   mounted() {
