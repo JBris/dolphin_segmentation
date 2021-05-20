@@ -65,8 +65,10 @@ export default {
   },
   computed: {
     filteredTasks() {
-      return this.taskList
-      .filter(task => task.name.toLowerCase().indexOf(this.taskName.toLowerCase()) >= 0)
+      return this.taskList.filter(task => task.name.toLowerCase().indexOf(this.taskName.toLowerCase()) >= 0)
+    },
+    taskListNames() {
+      return this.taskList.map(task => task.name)
     }
   },
   mounted() {
@@ -89,6 +91,9 @@ export default {
       this.$buefy.modal.open({
         parent: this,
         component: TaskCreateForm,
+        props: {
+          taskListNames: this.taskListNames
+        },
         hasModalCard: true,
         trapFocus: true,
         fullScreen: true,

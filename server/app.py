@@ -40,8 +40,8 @@ def process_file_select(data):
     if isinstance(data.get("cache_duration"), int): cache_duration = data["cache_duration"]
     else: cache_duration = config('CACHE_DURATION', default = 86400, cast = int)
 
-    if data.get("autodownload") == 1 or data.get("autodownload") == 0: autodownload = data["autodownload"]
-    else: autodownload = config('AUTODOWNLOAD_FILE', default = 1, cast = int)
+    if data.get("autodownload") == True or data.get("autodownload") == False: autodownload = data["autodownload"]
+    else: autodownload = config('AUTODOWNLOAD_FILE', default = True, cast = bool)
 
     preprocessed_data = Preprocessor().preprocess(data, current_task)
     processed_data = Processor().process(preprocessed_data, current_task)

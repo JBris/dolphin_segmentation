@@ -76,7 +76,7 @@
         <b-checkbox v-model="config.autodownload_default" type="is-success">
             Autodownload Datasets
         </b-checkbox>
-        <b-tooltip label="Automatically download datasets upon pipeline step completion." position="is-right" type="is-primary">
+        <b-tooltip label="Automatically download datasets upon task completion." position="is-right" type="is-primary">
             <b-icon
             :type="{'is-success' : true}"
             class="help-icon"

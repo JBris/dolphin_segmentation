@@ -13,6 +13,7 @@ services:
       FLASK_PORT: "5000"
       FLASK_ENV: $FLASK_ENV
       FLASK_DEBUG: $FLASK_DEBUG
+      BASE_DIR: $BASE_DIR
       IMAGE_DIR: $IMAGE_DIR
       DATASET_DIR: $DATASET_DIR
       OUT_DIR: $OUT_DIR
@@ -55,6 +56,7 @@ services:
       FLASK_PORT: "5000"
       FLASK_ENV: $FLASK_ENV
       FLASK_DEBUG: $FLASK_DEBUG
+      BASE_DIR: $BASE_DIR
       IMAGE_DIR: $IMAGE_DIR
       DATASET_DIR: $DATASET_DIR
       OUT_DIR: $OUT_DIR
@@ -95,6 +97,7 @@ services:
       NODE_ENV: $NODE_ENV
       FLASK_HOST: "nginx_flask"
       FLASK_PORT: "80"
+      BASE_DIR: $BASE_DIR
       IMAGE_DIR: $IMAGE_DIR
       DATASET_DIR: $DATASET_DIR
       OUT_DIR: $OUT_DIR
