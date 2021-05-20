@@ -4,7 +4,7 @@ import Home from './components/Home.vue'
 import ImageList from './components/body/ImageList.vue'
 import Datasets from './components/body/Datasets.vue'
 import Outputs from './components/body/Outputs.vue'
-import Pipelines from './components/body/Pipelines.vue'
+import Tasks from './components/body/Tasks.vue'
 import Options from './components/body/Options.vue'
 
 Vue.use(VueRouter)
@@ -14,7 +14,7 @@ const routes = [
   { path: '/images', name: 'Images', component: ImageList },
   { path: '/datasets', name: 'Datasets', component: Datasets },
   { path: '/outputs', name: 'Outputs', component: Outputs },
-  { path: '/pipelines', name: 'Pipelines', component: Pipelines },
+  { path: '/tasks', name: 'Tasks', component: Tasks },
   { path: '/options', name: 'Options', component: Options }
 ]
 

@@ -18,8 +18,12 @@
                 aria-previous-label="Previous page"
                 aria-page-label="Page"
                 aria-current-label="Current page"
-                debounce-search="250"
-                :sticky-header="true">
+                debounce-search="100"
+                :sticky-header="false"
+                :hoverable="true"
+                :striped="true"
+                :narrowed="false"
+                :mobile-cards="true">
 
                 <b-table-column field="index" label="Index" width="40" sortable numeric v-slot="props">
                     {{ props.row.index }}
@@ -89,3 +93,12 @@ export default {
     }
 }
 </script>
+
+<style scoped lang="css">
+
+.b-table .table-wrapper .table {
+    height: 80vh;
+    width: 80vw;
+}
+</style>
+

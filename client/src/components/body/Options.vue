@@ -88,9 +88,9 @@
 
       <b-field>
         <b-checkbox v-model="config.hide_tasks" type="is-success">
-            Hide Tasks
+            Hide Task Dashboard
         </b-checkbox>
-        <b-tooltip label="Hide the tasks option in the header bar." position="is-right" type="is-primary">
+        <b-tooltip label="Hide the task dashboard option in the header bar." position="is-right" type="is-primary">
           <b-icon
             :type="{'is-success' : true}"
             class="help-icon"

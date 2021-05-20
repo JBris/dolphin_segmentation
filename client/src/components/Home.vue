@@ -1,9 +1,9 @@
 <template>
-  <div class="hello">
+  <div class="home">
     <h1>Welcome to the {{ appName }} app</h1>
     <br/>
     <p>
-      This application will allow you to build customised image processing pipelines to automate the process of identifying individual dolphins.
+      This application will allow you to create image processing tasks to automate the process of identifying individual dolphins.
     </p>
     <router-link to="/images"><h3>Images</h3></router-link>
     <p>
@@ -17,9 +17,9 @@
     <p>
       Examine the results of your pipelines and view your processed images.
     </p>
-    <router-link to="/pipelines"><h3>Pipelines</h3></router-link>
+    <router-link to="/tasks"><h3>Tasks</h3></router-link>
     <p>
-      Construct your own image processing pipelines.
+      Create and dispatch image processing tasks.
     </p>
   </div>
 </template>

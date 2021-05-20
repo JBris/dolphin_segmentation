@@ -107,5 +107,9 @@ h3 {
     height: 7.5vh;
 }
 
-</style>
+.tab-content {
+    height: 80vh;
+    width: 80vw;
+}
 
+</style>

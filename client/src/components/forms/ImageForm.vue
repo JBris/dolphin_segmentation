@@ -131,5 +131,11 @@ h3 {
     background-color: white;
     height: 7.5vh;
 }
+
+.tab-content {
+    height: 80%;
+    width: 80%;
+}
+
 </style>
 

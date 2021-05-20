@@ -20,11 +20,11 @@
                 <b-navbar-item tag="router-link" :to="{ name: 'Outputs' }">
                     Outputs
                 </b-navbar-item>
-                <b-navbar-item tag="router-link" :to="{ name: 'Pipelines' }">
-                    Pipelines
+                <b-navbar-item tag="router-link" :to="{ name: 'Tasks' }">
+                    Tasks
                 </b-navbar-item>
                 <b-navbar-item v-if="!config.hide_tasks" :href="tasksUrl" target="_blank" rel="noopener noreferrer">
-                    Tasks
+                    Task Dashboard
                 </b-navbar-item>
                 <b-navbar-item v-if="!config.hide_notebooks" :href="notebooksUrl" target="_blank" rel="noopener noreferrer">
                     Notebooks

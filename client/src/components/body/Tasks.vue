@@ -6,10 +6,10 @@
 
 <script>
   export default {
-    name: 'Pipelines',
+    name: 'Tasks',
     data () {
       return {
-        msg: 'Pipelines'
+        msg: 'Tasks'
       }
     }
   }
