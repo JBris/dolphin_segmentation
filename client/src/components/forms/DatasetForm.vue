@@ -1,10 +1,10 @@
 <template>
-    <div class="modal-card">
+    <div class="modal-card ">
         <header class="modal-card-head">
             <h3>{{file.name}}</h3>
         </header>
         <section class="modal-card-body">
-            <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
+            <b-tabs position="is-centered" class="block" type="is-boxed" v-model="activeTab"> 
 
                 <b-tab-item label="Table" icon="table">
                     <div class="container" v-if="activeTab == 0">
@@ -105,11 +105,6 @@ h3 {
     border: 0.02em solid hsl(171, 100%, 41%);
     background-color: white;
     height: 7.5vh;
+    justify-content: center;
 }
-
-.tab-content {
-    height: 80vh;
-    width: 80vw;
-}
-
 </style>

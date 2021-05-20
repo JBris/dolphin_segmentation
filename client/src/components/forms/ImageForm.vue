@@ -4,7 +4,7 @@
             <h3>{{file.name}}</h3>
         </header>
         <section v-if="file.type == 'image'" class="modal-card-body">
-            <b-tabs position="is-left" vertical class="block" v-model="activeTab" :animated="false"> 
+            <b-tabs position="is-centered" class="block" type="is-boxed" v-model="activeTab" :animated="false"> 
                 <b-tab-item label="Visualise" icon="chart-line">
                     <div class="container" v-if="activeTab == 0">
                         <VisualiseForm v-bind:file="file" v-bind:imagePath="imagePath" v-on:update_file_list="updateFileList()"/>
@@ -28,7 +28,7 @@
             </b-tabs>
         </section>
         <section v-if="file.type == 'tar' || file.type == 'zip'" class="modal-card-body">
-            <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
+            <b-tabs position="is-centered" class="block" type="is-boxed" v-model="activeTab"> 
                 <b-tab-item label="Copy" icon="folder-swap">
                     <div class="container" v-if="activeTab == 0">
                         <CopyForm v-bind:file="file" v-on:update_file_list="updateFileList()"/>
@@ -48,7 +48,7 @@
         </section>
         
         <section v-if="file.type == 'dir'" class="modal-card-body">
-            <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
+            <b-tabs position="is-centered" class="block" type="is-boxed" v-model="activeTab"> 
                 <b-tab-item label="Copy" icon="folder-swap">
                     <div class="container" v-if="activeTab == 0">
                         <CopyForm v-bind:file="file" v-on:update_file_list="updateFileList()"/>
@@ -130,6 +130,7 @@ h3 {
     border: 0.02em solid hsl(171, 100%, 41%);
     background-color: white;
     height: 7.5vh;
+    justify-content: center;
 }
 
 .tab-content {

@@ -18,7 +18,7 @@
                 aria-previous-label="Previous page"
                 aria-page-label="Page"
                 aria-current-label="Current page"
-                debounce-search="100"
+                debounce-search=100
                 :sticky-header="false"
                 :hoverable="true"
                 :striped="true"
@@ -93,12 +93,4 @@ export default {
     }
 }
 </script>
-
-<style scoped lang="css">
-
-.b-table .table-wrapper .table {
-    height: 80vh;
-    width: 80vw;
-}
-</style>
 
