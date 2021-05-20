@@ -1,38 +1,7 @@
 <template>
     <section>
         <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
-        <b-field label="Destination">
-              <template #label>
-                <h3 class="group-header">Destination
-                    <b-tooltip type="is-primary" position="is-right" label="The destination of the copied file.">
-                        <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
-                    </b-tooltip>
-                </h3>
-            </template>
-            <b-input v-model="destination"></b-input>
-        </b-field>
-
-        <b-field label="Format" type="is-success">
-              <template #label>
-                <h3 class="group-header">Format
-                    <b-tooltip type="is-primary" position="is-right" label="The format of the copied file.">
-                        <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
-                    </b-tooltip>
-                </h3>
-            </template>
-            <b-autocomplete v-model="currentFormat" @select="onSelect" open-on-focus :data="permittedFileFormats">
-            </b-autocomplete>
-        </b-field>
-        <br/>
-        <section>
-            <div class="buttons">
-                <b-button type="is-success"
-                    v-on:click="confirm"
-                    icon-left="check">
-                    Confirm
-                </b-button>
-            </div>
-        </section>
+        <div id="dataset-visualisation"></div>
     </section>
 </template>
 
@@ -49,24 +18,20 @@ export default {
     },
     data() {
         return {
-            loading: false
+            loading: false,
+            plot: {}
         }
     },
     mounted() {
-        this.currentFormat = this.permittedFileFormats[0]
-        this.destination = `${this.file.file.split('.').slice(0, -1).join('.')}_copy.${this.currentFormat}`
+        this.loadPlot()
     },
     methods: {
-        onSelect(format) {
-            this.destination = `${this.destination.split('.').slice(0, -1).join('.')}.${format}`
-        },
-        async confirm() {
+        async loadPlot() {
             this.loading = true
-            await file.copy(this.$store.state.SERVER_HOST, this.file.file, this.file.type, this.destination, this.currentFormat )
+            this.plot = await file.visualise(this.$store.state.SERVER_HOST, this.file.file, this.file.type, this.$store.state.visualisationMethod)
+            window.Bokeh.embed.embed_item(this.plot, "dataset-visualisation")
             this.loading = false
-            this.$buefy.snackbar.open({message: `File copied to ${this.destination}`, duration: 2500, type: "is-success", position: "is-bottom"})
-            this.$emit("update_file_list")
-        }
+        },
     }
 }
 </script>

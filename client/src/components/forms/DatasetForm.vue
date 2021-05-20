@@ -7,23 +7,33 @@
             <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
 
                 <b-tab-item label="Copy" icon="folder-swap">
-                    <CopyForm v-bind:file="file" v-if="activeTab == 0" v-on:update_file_list="updateFileList()"/>
+                    <div class="container" v-if="activeTab == 0">
+                         <CopyForm v-bind:file="file" v-on:update_file_list="updateFileList()"/>
+                    </div>
                 </b-tab-item>
 
                 <b-tab-item label="Visualise" icon="chart-line">
-                    <VisualiseForm v-bind:file="file" v-if="activeTab == 1" v-on:update_file_list="updateFileList()"/>
+                    <div class="container" v-if="activeTab == 1">
+                        <VisualiseForm v-bind:file="file" v-on:update_file_list="updateFileList()"/>
+                    </div>
                 </b-tab-item>
 
                 <b-tab-item label="Sort" icon="sort">
-                    <SortForm v-bind:file="file" v-if="activeTab == 2" v-on:update_file_list="updateFileList()"/>
+                    <div class="container" v-if="activeTab == 2">
+                        <SortForm v-bind:file="file" v-on:update_file_list="updateFileList()"/>
+                    </div>
                 </b-tab-item>
 
                 <b-tab-item label="Archive" icon="archive">
-                    <ArchiveForm v-bind:file="file" v-if="activeTab == 3" v-on:update_file_list="updateFileList()"/>
+                    <div class="container" v-if="activeTab == 3">
+                        <ArchiveForm v-bind:file="file" v-on:update_file_list="updateFileList()"/>
+                    </div>
                 </b-tab-item>
 
                 <b-tab-item label="Delete" icon="delete">
-                    <DeleteForm v-bind:file="file" v-if="activeTab == 4" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
+                    <div class="container" v-if="activeTab == 4">
+                        <DeleteForm v-bind:file="file" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
+                    </div>       
                 </b-tab-item>
 
             </b-tabs>
