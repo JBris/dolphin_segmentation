@@ -24,9 +24,9 @@ class Image:
 
     def classify_file(self, path, name):
         if os.path.isdir(path): return { "type": "dir", "file": path, "name": name }
-        if zipfile.is_zipfile(path): return { "type": "archive", "file": path, "name": name }
+        if zipfile.is_zipfile(path): return { "type": "zip", "file": path, "name": name }
         try: 
-            if tarfile.is_tarfile(path): return { "type": "archive", "file": path, "name": name }
+            if tarfile.is_tarfile(path): return { "type": "tar", "file": path, "name": name }
         except: None
 
         image = self.check_valid_image(path)  

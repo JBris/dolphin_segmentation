@@ -6,12 +6,14 @@ from flask import Blueprint, json, request, jsonify, current_app, url_for, make_
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
 from api.services.content_type import ContentType
+from api.services.archiver import Archiver
 from api.services.copy import Copy
 from api.services.dataset import Dataset
 from api.services.deletion import Deletion
 from api.services.image import Image
 from api.services.serializer import Serializer
 from api.services.sort import Sort
+from api.services.validation.archive import FileArchiveValidator
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.validation.visualisation import FileVisualisationValidator, FilePathValidator as FileVisualisationPathValidator
 from api.services.validation.copy import FileCopyValidator
@@ -152,6 +154,21 @@ def file_copy_data():
         "in": data["in"],
         "out": out
     })
+
+@file_api.route('/archive', methods=['POST'])
+def file_archive():
+    validator = FileArchiveValidator()
+    data = validator.validate(request)
+    if data is None: return jsonify(validator.get_error_message()), 400 
+    archive = Archiver().process(data["task"], data["type"], data["in"], data["out"])
+    if archive:
+        return jsonify({
+            "status": "complete",
+            "in": data["in"],
+            "out": data["out"]
+        })
+    else:
+        return jsonify({"error": 1, "message": "Archive failed.", "in": data["in"], "out": data["out"]}), 400
 
 @file_api.route('/delete', methods=['DELETE'])
 def file_delete():

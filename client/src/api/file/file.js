@@ -1,5 +1,5 @@
 import client from '@/api/http/client'
-import { COPY, COPY_DATA, VISUALISATION, SORT, DELETE } from '@/api/endpoints'
+import { COPY, COPY_DATA, ARCHIVE, VISUALISATION, SORT, DELETE } from '@/api/endpoints'
 
 class File {    
     async copy(host, inPAth, out) {
@@ -16,6 +16,10 @@ class File {
             out: outPath,
             out_format: outFormat
         })
+    }
+
+    async archive(host, task, type, inFile, out) {
+        return client.post(`${host}/${ARCHIVE}`, { task, type, in: inFile, out })
     }
 
     async visualise(host, file, format, method) {

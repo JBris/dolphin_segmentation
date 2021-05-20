@@ -18,8 +18,12 @@
                     <SortForm v-bind:file="file" v-if="activeTab == 2" v-on:update_file_list="updateFileList()"/>
                 </b-tab-item>
 
+                <b-tab-item label="Archive" icon="archive">
+                    <ArchiveForm v-bind:file="file" v-if="activeTab == 3" v-on:update_file_list="updateFileList()"/>
+                </b-tab-item>
+
                 <b-tab-item label="Delete" icon="delete">
-                    <DeleteForm v-bind:file="file" v-if="activeTab == 3" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
+                    <DeleteForm v-bind:file="file" v-if="activeTab == 4" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
                 </b-tab-item>
 
             </b-tabs>
@@ -38,6 +42,7 @@
 import CopyForm from '@/components/forms/dataset/CopyForm'
 import VisualiseForm from '@/components/forms/dataset/VisualiseForm'
 import SortForm from '@/components/forms/dataset/SortForm'
+import ArchiveForm from '@/components/forms/dataset/ArchiveForm'
 import DeleteForm from '@/components/forms/dataset/DeleteForm'
 
 export default {
@@ -46,6 +51,7 @@ export default {
         CopyForm,
         VisualiseForm,
         SortForm,
+        ArchiveForm,
         DeleteForm
     },
     props: {

@@ -13,7 +13,9 @@ export default new Vuex.Store({
     SERVER_HOST: process.env.VUE_APP_SERVER_HOST,
     NOTEBOOK_HOST: process.env.VUE_APP_NOTEBOOK_HOST,
     TASKS_HOST: process.env.VUE_APP_TASKS_HOST,
-    permittedFileFormats: ['csv', 'json']
+    permittedFileFormats: ['csv', 'json'],
+    permittedArchiveFormats: ['zip', 'tar'],
+    visualisationMethod: "umap"
   },
   mutations: {
     setConfig(state, config) {

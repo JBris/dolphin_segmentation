@@ -4,6 +4,7 @@ export const DOWNLOAD = `${BASE}/download`
 export const VISUALISATION = `${BASE}/visualisation`
 export const COPY = `${BASE}/copy`
 export const COPY_DATA = `${BASE}/copy/data`
+export const ARCHIVE = `${BASE}/archive`
 export const SORT = `${BASE}/sort`
 export const DELETE = `${BASE}/delete`
 export const CHECK_PROGRESS = `${BASE}/check_progress`

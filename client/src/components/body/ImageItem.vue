@@ -15,7 +15,7 @@
         ></b-image>
 
         <b-image
-        v-if="file.type == 'archive'"
+        v-if="file.type == 'zip' || file.type == 'tar'"
         :src="require('@/assets/images/archive.jpg')"
         class="image is-64x64 is-inline-block"
         ></b-image>

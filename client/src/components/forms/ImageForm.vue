@@ -11,21 +11,42 @@
                 <b-tab-item label="Copy" icon="folder-swap">
                     <CopyForm v-bind:file="file" v-if="activeTab == 1" v-on:update_file_list="updateFileList()"/>
                 </b-tab-item>
+                <b-tab-item label="Archive" icon="archive">
+                    <ArchiveForm v-bind:file="file" v-if="activeTab == 2" v-on:update_file_list="updateFileList()"/>
+                </b-tab-item>
+                <b-tab-item label="Delete" icon="delete">
+                    <DeleteForm v-bind:file="file" v-if="activeTab == 3" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
+                </b-tab-item>
+            </b-tabs>
+        </section>
+        <section v-if="file.type == 'tar' || file.type == 'zip'" class="modal-card-body">
+            <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
+                <b-tab-item label="Copy" icon="folder-swap">
+                    <CopyForm v-bind:file="file" v-if="activeTab == 0" v-on:update_file_list="updateFileList()"/>
+                </b-tab-item>
+                <b-tab-item label="Extract" icon="folder-move">
+                    <ExtractForm v-bind:file="file" v-if="activeTab == 1" v-on:update_file_list="updateFileList()"/>
+                </b-tab-item>
                 <b-tab-item label="Delete" icon="delete">
                     <DeleteForm v-bind:file="file" v-if="activeTab == 2" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
                 </b-tab-item>
             </b-tabs>
         </section>
-        <section v-else class="modal-card-body">
+        
+        <section v-if="file.type == 'dir'" class="modal-card-body">
             <b-tabs position="is-left" vertical class="block" v-model="activeTab"> 
                 <b-tab-item label="Copy" icon="folder-swap">
                     <CopyForm v-bind:file="file" v-if="activeTab == 0" v-on:update_file_list="updateFileList()"/>
                 </b-tab-item>
+                <b-tab-item label="Archive" icon="archive">
+                    <ArchiveForm v-bind:file="file" v-if="activeTab == 1" v-on:update_file_list="updateFileList()"/>
+                </b-tab-item>
                 <b-tab-item label="Delete" icon="delete">
-                    <DeleteForm v-bind:file="file" v-if="activeTab == 1" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
+                    <DeleteForm v-bind:file="file" v-if="activeTab == 2" v-on:update_file_list="updateFileList()" v-on:close_modal="$parent.close()"/>
                 </b-tab-item>
             </b-tabs>
         </section>
+
         <footer class="modal-card-foot">
           <b-button type="is-primary"
             label="Close"
@@ -39,6 +60,8 @@
 <script>
 import VisualiseForm from '@/components/forms/image/VisualiseForm'
 import CopyForm from '@/components/forms/image/CopyForm'
+import ArchiveForm from '@/components/forms/image/ArchiveForm'
+import ExtractForm from '@/components/forms/image/ExtractForm'
 import DeleteForm from '@/components/forms/image/DeleteForm'
 
 export default {
@@ -46,6 +69,8 @@ export default {
     components:{
         VisualiseForm,
         CopyForm,
+        ArchiveForm,
+        ExtractForm,
         DeleteForm
     },
     props: {
