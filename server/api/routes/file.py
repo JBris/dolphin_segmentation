@@ -14,6 +14,7 @@ from api.services.image import Image
 from api.services.serializer import Serializer
 from api.services.sort import Sort
 from api.services.validation.archive import FileArchiveValidator
+from api.services.validation.dataset import FileDatasetValidator
 from api.services.validation.file import FileSelectValidator, FileListValidator, FilePathValidator
 from api.services.validation.visualisation import FileVisualisationValidator, FilePathValidator as FileVisualisationPathValidator
 from api.services.validation.copy import FileCopyValidator
@@ -228,6 +229,13 @@ def file_view_datasets():
 @file_api.route('/image/<path:path>', methods=['GET'])
 def file_view_image(path):
     return send_file(f"/{path}")
+
+@file_api.route('/dataset/view', methods=['POST'])
+def file_view_dataset():
+    validator = FileDatasetValidator()
+    data = validator.validate(request)
+    if data is None: return jsonify(validator.get_error_message()), 400 
+    return jsonify(data["data"])
 
 @file_api.route('/options', methods=['GET', 'POST', 'PUT'])
 def file_options():
