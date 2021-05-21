@@ -15,6 +15,12 @@
                         @select="option => selectFile(option)" :data="filteredFiles">
                         <template slot-scope="props">
                             <div class="media">
+                              <div class="media-left">
+                                <img width="32" v-if="props.option.type == 'image'" :src="`${imagePath}/${props.option.file}`">
+                                <img width="32" v-if="props.option.type == 'dir'" :src="require('@/assets/images/folder.png')">
+                                <img width="32" v-if="props.option.type == 'tar'" :src="require('@/assets/images/archive.png')">
+                                <img width="32" v-if="props.option.type == 'zip'" :src="require('@/assets/images/archive.png')">
+                              </div>
                               <div class="media-content">
                                   {{ props.option.name}}
                               </div>

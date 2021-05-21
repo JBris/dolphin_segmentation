@@ -231,12 +231,18 @@ export default {
 
             const fileType = (this.fileType == "image")? "images" : this.fileType 
             this.loading = true
-            await task.select(
-                this.$store.state.SERVER_HOST, this.name, this.task, this.module, this.solver, fileType, this.file, this.out, this.cacheDuration, this.autodownload
-            )
+
+            try {
+                await task.select(
+                    this.$store.state.SERVER_HOST, this.name, this.task, this.module, this.solver, fileType, this.file, this.out, this.cacheDuration, this.autodownload
+                )
+            } catch {
+                this.$buefy.snackbar.open({message: `Task ${this.name} failed to be created.`, duration: 2500, type: "is-success", position: "is-bottom"})
+            }
+
             this.loading = false
             this.$buefy.snackbar.open({message: `Task ${this.name} created`, duration: 2500, type: "is-success", position: "is-bottom"})
-            this.$emit("update_file_list")
+            this.$emit("update_task_list")
             this.$parent.close()
         },
         validate() {

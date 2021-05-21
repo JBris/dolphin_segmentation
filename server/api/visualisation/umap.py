@@ -42,7 +42,7 @@
 
 class UMAP:
     def visualise(self, data):
-        return data.to_dict()
+        return data
         # mapper = UMAPBase()
         # mapper.embedding_ = data[["x", "y"]].values
         # p = interactive(mapper, labels = data["class"], hover_data = data, point_size = 5, interactive_text_search = False)

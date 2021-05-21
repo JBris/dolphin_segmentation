@@ -1,8 +1,16 @@
 import os
 import json 
 from pathlib import Path
+from decouple import config
 
 class Tasks:
+
+    def write_file(self, task_id, url, data):
+        task_dict = { "id": task_id, "url": url, "status": "created" }
+        for key in data: task_dict[key] = data[key]
+        task_dir = config('TASK_DIR', default = '/home/app/system/tasks')
+        with open(f"{task_dir}/{data['name']}.json", 'w') as f: json.dump(task_dict, f)
+        return task_dict
 
     def process_directory(self, path):
         path = Path(path)

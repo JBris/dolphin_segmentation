@@ -12,10 +12,15 @@
             </div>
             <div class="column is-half">
                 <b-field>
-                    <b-autocomplete v-model="taskName" field="name" icon="magnify"
+                    <b-autocomplete v-model="taskName" field="name" group-field="status" icon="magnify"
                         @select="option => selectTask(option)" :data="filteredTasks">
                         <template slot-scope="props">
                             <div class="media">
+                              <div class="media-left">
+                                <img width="32" v-if="props.option.status == 'complete'" :src="require('@/assets/images/task_complete.svg')">
+                                <img width="32" v-if="props.option.status == 'complete'" :src="require('@/assets/images/task_failed.svg')">
+                                <img width="32" v-else :src="require('@/assets/images/task_incomplete.svg')">
+                              </div>
                               <div class="media-content">
                                   {{ props.option.name}}
                               </div>
@@ -114,7 +119,7 @@ export default {
         trapFocus: true,
         fullScreen: true,
         events: {
-          update_file_list: () => this.getTaskList(this.$store.state.TASK_DIR, false)
+          update_task_list: () => this.getTaskList(this.$store.state.TASK_DIR, false)
         }
       })
     }
@@ -126,4 +131,9 @@ export default {
 .create-button {
   padding-bottom: 1.5vh;
 }
+
+p:first-letter {
+    text-transform:capitalize;
+}
+
 </style>

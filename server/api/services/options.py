@@ -15,6 +15,11 @@ default_options = {
         },
     },
     "features": {
+        "identification": {
+            "name": "Identification",
+            "enabled": True,
+            "editable": False
+        },
         "segmentation": {
             "name": "Segmentation",
             "enabled": True,
@@ -24,11 +29,6 @@ default_options = {
             "name": "Classification",
             "enabled": True,
             "editable": True
-        },
-        "identification": {
-            "name": "Identification",
-            "enabled": True,
-            "editable": False
         }
     },
     "solvers": {
