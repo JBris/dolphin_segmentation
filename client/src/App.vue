@@ -28,6 +28,7 @@ export default {
   },
   mounted() {
     this.getConfig()
+    this.subscribeToTasks()
   },
   methods: {
     async getConfig() {
@@ -37,6 +38,13 @@ export default {
         this.error = false
       } catch (e) { this.error = true }
       this.loading = false
+    },
+    subscribeToTasks() {
+      this.$store.subscribe((mutation, state) => {
+        if(mutation.type === 'updateTaskStatus'){
+            this.$buefy.snackbar.open({message: state.lastTaskStatus, duration: 2500, type: "is-primary", position: "is-bottom"})
+        }
+      })
     }
   }
 }

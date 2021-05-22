@@ -78,6 +78,7 @@ export default {
   },
   mounted() {
     this.getTaskList()
+    this.subscribeToTasks()
   },
   methods: {
     async getTaskList(tasksDir = this.$store.state.TASK_DIR, loading = true) {
@@ -117,6 +118,13 @@ export default {
         fullScreen: true,
         events: {
           update_task_list: () => this.getTaskList(this.$store.state.TASK_DIR, false)
+        }
+      })
+    },
+    subscribeToTasks() {
+      this.$store.subscribe(mutation => {
+        if(mutation.type === 'updateTaskStatus'){
+            this.getTaskList(this.$store.state.TASK_DIR, false)
         }
       })
     }

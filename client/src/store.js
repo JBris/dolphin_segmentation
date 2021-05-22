@@ -20,11 +20,15 @@ export default new Vuex.Store({
     permittedFileFormats: ['csv', 'json'],
     permittedArchiveFormats: ['zip', 'tar'],
     permittedFileInputs: { "dir": "Directory", "image": "Image", "zip": "Zip", "tar": "Tar" },
-    visualisationMethod: "umap"
+    visualisationMethod: "umap",
+    lastTaskStatus: ""
   },
   mutations: {
     setConfig(state, config) {
       state.config = config;
+    },
+    updateTaskStatus(state, status) {
+      state.lastTaskStatus = status
     },
   },
   actions: {}

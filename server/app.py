@@ -42,13 +42,7 @@ def process_file_select(data):
     else: autodownload = config('AUTODOWNLOAD_FILE', default = True, cast = bool)
 
     status = "complete"
-    try: 
-        res = image_pipeline(data)
-        if not res: raise Exception()
-    except:
-        current_task.update_state( state = states.FAILURE, meta = 'image processing failed')
-        status = "failed"
-        raise Ignore()
+    if not image_pipeline(data): raise Exception()
     
     try: 
         task_data = Tasks().read_file(task_name)

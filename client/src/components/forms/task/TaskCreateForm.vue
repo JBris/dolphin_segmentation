@@ -207,7 +207,7 @@ export default {
             this.task = Object.keys(this.config.features)[0]
             this.module = Object.keys(this.config.modules)[0]
             this.solver = Object.keys(this.config.solvers)[0]
-            this.out = this.$store.state.OUT_DIR
+            this.out = this.$store.state.DATASET_DIR
             this.cacheDuration = this.config.cache_duration_default
             this.autodownload = this.config.autodownload_default
         },
@@ -243,12 +243,12 @@ export default {
             }
             this.loading = false
             this.$emit("update_task_list")
-            task.registerTask(res, this)
+            task.registerTask(this.$store.state.SERVER_HOST, this.name, res, this.$store)
             this.$buefy.snackbar.open({message: `Task ${this.name} created`, duration: 2500, type: "is-success", position: "is-bottom"})
             this.$parent.close()
         },
         nameChange() {
-            if(this.out != this.$store.state.OUT_DIR) {return}
+            if(this.out != this.$store.state.DATASET_DIR) {return}
             this.out = `${this.out}/${this.name}`
         },
         validate() {

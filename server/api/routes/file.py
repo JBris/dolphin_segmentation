@@ -202,7 +202,7 @@ def file_check_progress(task_id: str):
             res["substep_num"] = job.result['substep_num']
             res["substep_total"] = job.result['substep_total']
         return jsonify(res), 202 
-    else: return jsonify({"status": "error"}), 500
+    else: return jsonify({"status": "error"})
 
 @file_api.route('/images', methods=['POST'])
 def file_view_images():
