@@ -23,7 +23,7 @@ class Archiver:
 
         if type == FileArchiveType.ZIP.value: 
             os.chdir(Path(inFile).parent)
-            if os.path.isdir(inFile): shutil.make_archive(out, 'zip', Path(inFile).name)
+            if os.path.isdir(inFile): shutil.make_archive(out, 'zip', Path(inFile).stem)
             if os.path.isfile(inFile): 
                 with zipfile.ZipFile(out, 'w') as z: z.write(Path(inFile).name) 
             return True

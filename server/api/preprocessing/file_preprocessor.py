@@ -38,7 +38,10 @@ def preprocess_zip(data):
 
 def preprocess_tar(data):
     with tarfile.open(data['files'][0], 'r') as f: f.extractall(data['out'])
-    return preprocess_archive(data, f"{data['out']}/{Path(data['files'][0]).stem}")
+    out_dir = f"{data['out']}/{Path(data['files'][0]).stem}"
+    if Path(out_dir).suffix == ".tar": out_dir = Path(out_dir).stem
+    # while not os.path.isdir(out_dir): out_dir = Path(out_dir).stem
+    return preprocess_archive(data, out_dir)
 
 def preprocess_dir(data):
     full_path = Path(data["files"][0])

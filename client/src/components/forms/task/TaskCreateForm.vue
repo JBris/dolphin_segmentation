@@ -248,8 +248,7 @@ export default {
             this.$parent.close()
         },
         nameChange() {
-            if(this.out != this.$store.state.DATASET_DIR) {return}
-            this.out = `${this.out}/${this.name}`
+            this.out = `${this.$store.state.DATASET_DIR}/${this.name}`
         },
         validate() {
             if(this.name == "") {
