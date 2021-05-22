@@ -9,7 +9,7 @@
         ></b-image>
 
         <b-image
-            v-if="task.status == 'failed'"
+            v-else-if="task.status == 'failed'"
             :src="require('@/assets/images/task_failed.svg')"
             class="image is-64x64 is-inline-block"
         ></b-image>
@@ -21,7 +21,7 @@
         ></b-image>
 
       <p>{{task.name}}</p>
-      <p>{{task.status}}</p>
+      <p class="task-status">{{task.status}}</p>
     </div>
   </section>
 </template>
@@ -45,6 +45,10 @@ export default {
 </script>
 
 <style scoped lang="css">
+.task-status {
+  text-transform:capitalize;
+}
+
 .image-card {
   transition: height 0.3s, box-shadow 0.3s;
   word-wrap: break-word;

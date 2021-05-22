@@ -14,6 +14,7 @@ from api.services.validation.file import check_valid_image
 def _add_preprocessing_metadata(data, files):
     return {
         "name": data["name"],
+        "out": data["out"],
         "type": data["type"],
         "files": files,
         "data": data
@@ -32,12 +33,10 @@ def preprocess_archive(data, extracted_path):
     return _add_preprocessing_metadata(data, files)
 
 def preprocess_zip(data):
-    Path(data['out']).mkdir(parents = True, exist_ok = True)
     with zipfile.ZipFile(data['files'][0], 'r') as f: f.extractall(data['out'])
     return preprocess_archive(data, f"{data['out']}/{Path(data['files'][0]).stem}")
 
 def preprocess_tar(data):
-    Path(data['out']).mkdir(parents = True, exist_ok = True)
     with tarfile.open(data['files'][0], 'r') as f: f.extractall(data['out'])
     return preprocess_archive(data, f"{data['out']}/{Path(data['files'][0]).stem}")
 
@@ -58,6 +57,7 @@ def preprocess_images(data):
 
 class FilePreprocessor:
     def preprocess(self, data):
+        Path(data['out']).mkdir(parents = True, exist_ok = True)
         if data["type"] == FileType.ZIP.value: return preprocess_zip(data)
         if data["type"] == FileType.TAR.value: return preprocess_tar(data)
         if data["type"] == FileType.DIR.value: return preprocess_dir(data)

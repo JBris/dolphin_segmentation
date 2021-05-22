@@ -11,6 +11,9 @@
                     </b-icon>
                     Home
                 </b-navbar-item>
+                <b-navbar-item tag="router-link" :to="{ name: 'Tasks' }">
+                    Tasks
+                </b-navbar-item>
                 <b-navbar-item tag="router-link" :to="{ name: 'Images' }">
                     Images
                 </b-navbar-item>
@@ -19,9 +22,6 @@
                 </b-navbar-item>
                 <b-navbar-item tag="router-link" :to="{ name: 'Outputs' }">
                     Outputs
-                </b-navbar-item>
-                <b-navbar-item tag="router-link" :to="{ name: 'Tasks' }">
-                    Tasks
                 </b-navbar-item>
                 <b-navbar-item v-if="!config.hide_tasks" :href="tasksUrl" target="_blank" rel="noopener noreferrer">
                     Task Dashboard

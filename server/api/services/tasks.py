@@ -4,13 +4,27 @@ from pathlib import Path
 from decouple import config
 
 class Tasks:
+    task_dir = config('TASK_DIR', default = '/home/app/system/tasks')
 
-    def write_file(self, task_id, url, data):
+    def create_file(self, task_id, url, data):
         task_dict = { "id": task_id, "url": url, "status": "created" }
         for key in data: task_dict[key] = data[key]
-        task_dir = config('TASK_DIR', default = '/home/app/system/tasks')
-        with open(f"{task_dir}/{data['name']}.json", 'w') as f: json.dump(task_dict, f)
+        with open(f"{self.task_dir}/{data['name']}.json", 'w') as f: 
+            try: json.dump(task_dict, f)
+            except: return False
         return task_dict
+
+    def read_file(self, name):
+        with open(f"{self.task_dir}/{name}.json", 'r') as f: 
+            try: return json.load(f)
+            except ValueError: return False
+
+    def write_file(self, data):
+        with open(f"{self.task_dir}/{data['name']}.json", 'w') as f: 
+            try: 
+                json.dump(data, f)
+                return data
+            except: return False
 
     def process_directory(self, path):
         path = Path(path)

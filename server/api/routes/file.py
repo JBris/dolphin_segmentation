@@ -39,7 +39,7 @@ def file_select():
     if data is None: return jsonify(validator.get_error_message()), 400 
 
     task = current_app.config["FILE_WORKER"].send_task(f'{current_app.import_name}.process_file_select', args=[data], kwargs={})
-    Tasks().write_file(task.id, url_for('file.file_check_progress', task_id = task.id, external=True), data)
+    Tasks().create_file(task.id, url_for('file.file_check_progress', task_id = task.id, external=True), data)
     return jsonify({
         'url': f"{url_for('file.file_check_progress', task_id = task.id, external=True)}",
         'task_id': task.id

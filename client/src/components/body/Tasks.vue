@@ -18,7 +18,7 @@
                             <div class="media">
                               <div class="media-left">
                                 <img width="32" v-if="props.option.status == 'complete'" :src="require('@/assets/images/task_complete.svg')">
-                                <img width="32" v-if="props.option.status == 'complete'" :src="require('@/assets/images/task_failed.svg')">
+                                <img width="32" v-else-if="props.option.status == 'failed'" :src="require('@/assets/images/task_failed.svg')">
                                 <img width="32" v-else :src="require('@/assets/images/task_incomplete.svg')">
                               </div>
                               <div class="media-content">
@@ -88,9 +88,6 @@ export default {
         this.error = false
       } catch (e) { this.error = true }
       this.loading = false
-    },
-    async changeDir(file) {
-      return this.getTaskList(file.file)
     },
     create() {
       this.$buefy.modal.open({

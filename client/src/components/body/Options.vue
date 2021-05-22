@@ -134,9 +134,9 @@
     <section>
       <div class="buttons">
         <b-button type="is-success"
-          v-on:click="confirm"
+          v-on:click="save"
           icon-left="check">
-            Confirm
+            Save
           </b-button>
 
           <b-button type="is-danger"
@@ -180,12 +180,12 @@ import config from '../../config'
     mounted() {
       this.getConfig()
     },
+    destroyed () {
+    this.getConfig()
+  },
     methods: {
       async getConfig() {
-        if(Object.keys(this.config).length) {
-          this.loading = false
-          return this.config
-        }
+        this.loading = true
         try {
             const configuration = await config.get(this.$store.state.SERVER_HOST)
             this.config = configuration
@@ -193,12 +193,12 @@ import config from '../../config'
         } catch (e) { this.error = true }
         this.loading = false
       },
-      async confirm() {
+      async save() {
         this.loading = true
         const configuration = await config.confirm(this.$store.state.SERVER_HOST, this.config)
         this.config = configuration
         this.loading = false
-        this.$buefy.snackbar.open({message: 'Updated options.', duration: 2500, type: "is-success", position: "is-bottom"})
+        this.$buefy.snackbar.open({message: 'Saved options.', duration: 2500, type: "is-success", position: "is-bottom"})
       },
       cancel() {
         this.loading = true

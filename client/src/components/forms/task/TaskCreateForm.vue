@@ -16,7 +16,7 @@
                     </b-tooltip>
                 </h3>
             </template>
-            <b-input v-model="name" required></b-input>
+            <b-input v-model="name" required v-on:blur="nameChange"></b-input>
         </b-field>
         </div>
     </div>
@@ -112,12 +112,12 @@
             <b-field label="Destination">
                 <template #label>
                 <h3 class="group-header">Destination
-                    <b-tooltip type="is-primary" position="is-right" label="The extracted location of zip and tar files.">
+                    <b-tooltip type="is-primary" position="is-right" label="The output directory for the image processing results.">
                         <b-icon icon="help-circle-outline" type="is-success" size="is-small"></b-icon>
                     </b-tooltip>
                 </h3>
             </template>
-        <b-input v-model="out" :disabled="fileType == 'dir' || fileType == 'image' || fileType == ''"></b-input>
+        <b-input v-model="out" required></b-input>
         </b-field>
         </div>
     </div>
@@ -232,26 +232,33 @@ export default {
             const fileType = (this.fileType == "image")? "images" : this.fileType 
             this.loading = true
 
+            let res
             try {
-                await task.select(
+                res = await task.select(
                     this.$store.state.SERVER_HOST, this.name, this.task, this.module, this.solver, fileType, this.file, this.out, this.cacheDuration, this.autodownload
                 )
             } catch {
                 this.$buefy.snackbar.open({message: `Task ${this.name} failed to be created.`, duration: 2500, type: "is-success", position: "is-bottom"})
+                return this.$parent.close()
             }
-
             this.loading = false
-            this.$buefy.snackbar.open({message: `Task ${this.name} created`, duration: 2500, type: "is-success", position: "is-bottom"})
             this.$emit("update_task_list")
+            task.registerTask(res, this)
+            this.$buefy.snackbar.open({message: `Task ${this.name} created`, duration: 2500, type: "is-success", position: "is-bottom"})
             this.$parent.close()
+        },
+        nameChange() {
+            if(this.out != this.$store.state.OUT_DIR) {return}
+            this.out = `${this.out}/${this.name}`
         },
         validate() {
             if(this.name == "") {
                 this.$buefy.snackbar.open({message: 'Name field cannot be empty.', duration: 2500, type: "is-danger", position: "is-bottom"})
                 return false
             }
-            for(let task in this.taskListNames) {
-                if(this.name.trim() !== task) { continue }
+            
+            for (let i = 0; i < this.taskListNames.length; i++) {
+                if(this.name.trim() !== this.taskListNames[i]) { continue }
                 this.$buefy.snackbar.open({message: `Duplicate task name. ${this.name.trim()} already exists.`, duration: 2500, type: "is-danger", position: "is-bottom"})
                 return false
             }
@@ -265,10 +272,12 @@ export default {
                 this.$buefy.snackbar.open({message: 'File field cannot be empty.', duration: 2500, type: "is-danger", position: "is-bottom"})
                 return false
             }
-            if(this.fileType == "zip" && this.fileType == "tar" && this.out == "") {
-                this.$buefy.snackbar.open({message: 'Destination field cannot be empty when selecting zip or tar files.', duration: 2500, type: "is-danger", position: "is-bottom"})
+            
+            if(this.out == "") {
+                this.$buefy.snackbar.open({message: 'Destination field cannot be empty.', duration: 2500, type: "is-danger", position: "is-bottom"})
                 return false
             }
+            
             return true
         }
     }
