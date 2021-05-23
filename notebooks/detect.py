@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed May 19 07:19:19 2021
+Assignment 4
+Helper methods for image feature extraction and detection
+@author: Martin BRenner
 
-@author: elMartino
 """
 
 import cv2

@@ -1,4 +1,8 @@
-import os
+######################################################################################
+## Code is based on a facenet implementation: https://github.com/sainimohit23/FaceNet-Real-Time-face-recognition
+## Code was amended for the use of this project
+
+mport os
 import cv2
 import numpy as np
 import pandas as pd
