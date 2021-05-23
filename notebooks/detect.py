@@ -33,36 +33,7 @@ from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout
 from PyQt5.QtGui import QPixmap, QColor
 import sys
 from parameters import *
-
-class App(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Qt static label demo")
-        width = 640
-        height = 480
-        # create the label that holds the image
-        self.image_label = QLabel(self)
-        # create a text label
-        self.textLabel = QLabel('Demo')
-
-        # create a vertical box layout and add the two labels
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.image_label)
-        vbox.addWidget(self.textLabel)
-        # set the vbox layout as the widgets layout
-        self.setLayout(vbox)
-        # create a grey pixmap
-        grey = QPixmap(width, height)
-        grey.fill(QColor('darkGray'))
-        # set the image image to the grey pixmap
-        self.image_label.setPixmap(grey)
-
-
-#if __name__ == "__main__":
-#    app = QApplication(sys.argv)
-#    a = App()
-#    a.show()
-#    sys.exit(app.exec_())
+from functools import partial
 
 IMG_SIZE = 512
 # IMG_DIR = '../images/'
@@ -72,18 +43,15 @@ IMG_SIZE = 512
 
 # MODEL_DIR="../models/darknet"
 
-
-
 #####################################################################################
 #####################################################################################
 
 def filter(img,thrsh_a,thrsh_b,canny_a,canny_b,canny_c, rem_bkg=False):
-    fgbg = cv2.createBackgroundSubtractorKNN(detectShadows=False)
+    #fgbg = cv2.createBackgroundSubtractorKNN(detectShadows=False)
     
     img_in = img.copy()
-
     
-    fgmask = fgbg.apply(img_in)
+    #fgmask = fgbg.apply(img_in)
     #cv2.imshow("source", fgmask)
     
     img_tmp = cv2.cvtColor(img_in, cv2.COLOR_BGR2GRAY)      
@@ -139,7 +107,7 @@ def filter(img,thrsh_a,thrsh_b,canny_a,canny_b,canny_c, rem_bkg=False):
 #####################################################################################
 
 def filter_mask(img,thrsh_a,thrsh_b,canny_a,canny_b,canny_c):
-    fgbg = cv2.createBackgroundSubtractorKNN(detectShadows=False)
+    #fgbg = cv2.createBackgroundSubtractorKNN(detectShadows=False)
     
     img_in = img.copy()
     xp = [65, 60, 200, 200, 250]
@@ -149,7 +117,7 @@ def filter_mask(img,thrsh_a,thrsh_b,canny_a,canny_b,canny_c):
     table = np.interp(x, xp, fp).astype('uint8')
     #img_tmp = cv2.LUT(img_in, table)
     
-    fgmask = fgbg.apply(img_in)
+    #Sfgmask = fgbg.apply(img_in)
     #cv2.imshow("source", fgmask)
     #hsv = cv2.cvtColor(img_in, cv2.COLOR_BGR2HSV) 
     #maskc = cv2.inRange(hsv, color_tracked_lower, color_tracked_upper) 
@@ -208,8 +176,8 @@ def filter_mask(img,thrsh_a,thrsh_b,canny_a,canny_b,canny_c):
 #####################################################################################
 #####################################################################################
 
-
-def get_fin(image,idx=0,MASK=False):
+def get_fin(_img,idx=0,MASK=False):
+    global image_ftr
     # cv2.namedWindow("source1", cv2.WINDOW_AUTOSIZE)
     # imS = cv2.resize(image, (960, 540))  
     # cv2.imshow("source1", imS)
@@ -225,7 +193,7 @@ def get_fin(image,idx=0,MASK=False):
     weightsPath = os.path.sep.join([MODEL_DIR, "training/yolov4-dolphin_best.weights"])
     configPath = os.path.sep.join([MODEL_DIR, "yolov4-dolphin.cfg"])
     
-    img_fins, _ = find_fin(image,weightsPath,configPath,CONFIDENCE,THRESHOLD,IMG_SIZE,0)
+    img_fins, _ = find_fin(_img,weightsPath,configPath,CONFIDENCE,THRESHOLD,IMG_SIZE,0)
     
     #print(len(img_fins))
     if len(img_fins)>0:
@@ -251,15 +219,16 @@ def get_fin(image,idx=0,MASK=False):
         # merge channels adding the white mask to get rid of backgounds hidden behind alpha mask
         b, g, r = cv2.split(img_impr)
         a = np.zeros((IMG_SIZE, IMG_SIZE), np.uint8)
-        image = cv2.merge([cv2.subtract(b,mask_blk), cv2.subtract(g,mask_blk), cv2.subtract(r,mask_blk)])
+        _image = cv2.merge([cv2.subtract(b,mask_blk), cv2.subtract(g,mask_blk), cv2.subtract(r,mask_blk)])
         
         # features
-        image_x = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+        image_x = cv2.cvtColor(_image, cv2.COLOR_BGR2BGRA)
         img_rsz, image_ftr, img_mask, img_cntr, img_fd, fourier_desc, status = feature_extract(image_x, IMG_SIZE)
         #image_ftr = cv2.cvtColor(image_ftr, cv2.COLOR_BGRA2BGR)
         # cv2.imshow("source", image_ftr)
         return image_ftr, len(img_fins)
     else: 
+        global alpha,beta,gamma,img_alpha,img_beta,img_gamma,bin_thrsa,is_invers, image
         image = img
         cv2.namedWindow("adjustments", cv2.WINDOW_AUTOSIZE)
         cv2.namedWindow("source", cv2.WINDOW_AUTOSIZE)
@@ -284,11 +253,12 @@ def get_fin(image,idx=0,MASK=False):
         canny_c = 0.05
         
         is_invers = 0
-                      
-        def basicLinearTransform():
+        
+        def basicLinearTransform(img):
+            global image_ftr
             resa = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
             res = cv2.convertScaleAbs(img, alpha=img_alpha, beta=img_beta)
-            print(beta)
+            
             lookUpTablea = np.empty((1,256), np.uint8)
             lookUpTable = np.empty((1,256), np.uint8)
             for i in range(256):
@@ -296,7 +266,7 @@ def get_fin(image,idx=0,MASK=False):
                 lookUpTable[0,i] = np.clip(pow(i / 255.0, img_gamma) * 255.0, 0, 255)
             img_maska = cv2.LUT(resa, lookUpTablea)
             img_impr = cv2.LUT(res, lookUpTable)
-    
+        
             img_correctedb, img_mask, img_cntr = filter_mask(img_maska,bin_thrsa,bin_thrsb,canny_a,canny_b,canny_c)
             if is_invers==1:
                 img_mask = (255-img_mask)         
@@ -308,7 +278,7 @@ def get_fin(image,idx=0,MASK=False):
             b, g, r = cv2.split(img_impr)
             #a = np.zeros((IMG_SIZE, IMG_SIZE), np.uint8)
             image = cv2.merge([cv2.subtract(b,img_mask), cv2.subtract(g,img_mask), cv2.subtract(r,img_mask)])
-    
+        
             
             # features
             image_x = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2BGRA)
@@ -317,68 +287,68 @@ def get_fin(image,idx=0,MASK=False):
             cv2.imshow("source", image_ftr)
             img_corrected = cv2.hconcat([image, img_correctedb])
             cv2.imshow("adjustments", img_corrected)
-            
-        
-        def on_linear_transform_alpha_trackbar(val):
+
+                      
+        def on_linear_transform_alpha_trackbar(val,img):
             global alpha
             alpha = val / 100
-            basicLinearTransform()
+            basicLinearTransform(img)
         
-        def on_linear_transform_beta_trackbar(val):
+        def on_linear_transform_beta_trackbar(val,img):
             global beta
             beta = val - 100
-            basicLinearTransform()
+            basicLinearTransform(img)
         
-        def on_gamma_correction_trackbar(val):
+        def on_gamma_correction_trackbar(val,img):
             global gamma
             gamma = val / 100
-            basicLinearTransform()
+            basicLinearTransform(img)
             
-        def img_alpha_trackbar(val):
+        def img_alpha_trackbar(val,img):
             global img_alpha
             img_alpha = val / 100
-            basicLinearTransform()
+            basicLinearTransform(img)
         
-        def img_beta_trackbar(val):
+        def img_beta_trackbar(val,img):
             global img_beta
             img_beta = val - 100
-            basicLinearTransform()
+            basicLinearTransform(img)
         
-        def img_gamma_trackbar(val):
+        def img_gamma_trackbar(val,img):
             global img_gamma
             img_gamma = val / 100
-            basicLinearTransform()
+            basicLinearTransform(img)
             
-        def on_bina_adjust_trackbar(val):
+        def on_bina_adjust_trackbar(val,img):
             global bin_thrsa
             bin_thrsa = val
-            basicLinearTransform()
+            basicLinearTransform(img)
         
-        def on_binb_adjust_trackbar(val):
+        def on_binb_adjust_trackbar(val,img):
             global bin_thrsb
             bin_thrsb = val
-            basicLinearTransform()
+            basicLinearTransform(img)
             
-        def on_canny_a_adjust_trackbar(val):
+        def on_canny_a_adjust_trackbar(val,img):
             global canny_a
             canny_a = val
-            basicLinearTransform()
+            basicLinearTransform(img)
             
-        def on_canny_b_adjust_trackbar(val):
+        def on_canny_b_adjust_trackbar(val,img):
             global canny_b
             canny_b = val
-            basicLinearTransform()  
+            basicLinearTransform(img)  
         
-        def on_canny_c_adjust_trackbar(val):
+        def on_canny_c_adjust_trackbar(val,img):
             global canny_c
             canny_c = val
-            basicLinearTransform()
+            basicLinearTransform(img)
             
-        def setMask(val):
+        def setMask(val,img):
             global is_invers 
             is_invers=val
-            basicLinearTransform()
-        
+            basicLinearTransform(img)
+    
         img_corrected = np.empty((img.shape[0], img.shape[1]*2, img.shape[2]), img.dtype)
         img_gamma_corrected = np.empty((img.shape[0], img.shape[1]*2, img.shape[2]), img.dtype)
         
@@ -387,24 +357,24 @@ def get_fin(image,idx=0,MASK=False):
         # cv2.namedWindow('Gamma correction')
         
         alpha_init = int(alpha *100)
-        cv2.createTrackbar('Alpha gain (contrast)', 'adjustments', alpha_init, alpha_max, on_linear_transform_alpha_trackbar)
+        cv2.createTrackbar('Alpha gain (contrast)', 'adjustments', alpha_init, alpha_max, partial(on_linear_transform_alpha_trackbar, img=img))
         beta_init = beta + 100
-        cv2.createTrackbar('Beta bias (brightness)', 'adjustments', beta_init, beta_max, on_linear_transform_beta_trackbar)
+        cv2.createTrackbar('Beta bias (brightness)', 'adjustments', beta_init, beta_max, partial(on_linear_transform_beta_trackbar, img=img))
         gamma_init = int(gamma * 100)
-        cv2.createTrackbar('Gamma correction', 'adjustments', gamma_init, gamma_max, on_gamma_correction_trackbar)
+        cv2.createTrackbar('Gamma correction', 'adjustments', gamma_init, gamma_max, partial(on_gamma_correction_trackbar, img=img))
         
         img_alpha_init = int(img_alpha *100)
-        cv2.createTrackbar('Alpha Img', 'adjustments', img_alpha_init, alpha_max, img_alpha_trackbar)
+        cv2.createTrackbar('Alpha Img', 'adjustments', img_alpha_init, alpha_max, partial(img_alpha_trackbar, img=img))
         img_beta_init = img_beta + 100
-        cv2.createTrackbar('Beta Img', 'adjustments', img_beta_init, beta_max, img_beta_trackbar)
+        cv2.createTrackbar('Beta Img', 'adjustments', img_beta_init, beta_max, partial(img_beta_trackbar, img=img))
         img_gamma_init = int(img_gamma * 100)
-        cv2.createTrackbar('Gamma Img', 'adjustments', img_gamma_init, gamma_max, img_gamma_trackbar)
+        cv2.createTrackbar('Gamma Img', 'adjustments', img_gamma_init, gamma_max, partial(img_gamma_trackbar, img=img))
         
         
         bina_init = int(bin_thrsa)
-        cv2.createTrackbar('Binary Threshold a', 'adjustments', bina_init, 255, on_bina_adjust_trackbar)
+        # cv2.createTrackbar('Binary Threshold a', 'adjustments', bina_init, 255, partial(on_bina_adjust_trackbar, img=img))
         binb_init = int(bin_thrsb)
-        cv2.createTrackbar('Binary Threshold b', 'adjustments', binb_init, 255, on_binb_adjust_trackbar)
+        # cv2.createTrackbar('Binary Threshold b', 'adjustments', binb_init, 255, partial(on_binb_adjust_trackbar, img=img))
         
         # canny_a_init = int(canny_a*100)
         # cv2.createTrackbar('Canny Threshold a', 'adjustments', canny_a_init, 255, on_canny_a_adjust_trackbar)
@@ -416,26 +386,25 @@ def get_fin(image,idx=0,MASK=False):
         #cv2.createButton("Set Maks",setMask,NULL,cv2.QT_PUSH_BUTTON,1)
         
         
-        on_linear_transform_alpha_trackbar(alpha_init)
-        on_gamma_correction_trackbar(gamma_init)
-        on_bina_adjust_trackbar(bina_init)
-        on_binb_adjust_trackbar(binb_init)
-        # on_canny_a_adjust_trackbar(canny_a_init)
-        # on_canny_b_adjust_trackbar(canny_b_init)
-        # on_canny_c_adjust_trackbar(canny_c_init)
+        on_linear_transform_alpha_trackbar(alpha_init,img)
+        on_gamma_correction_trackbar(gamma_init,img)
+        on_bina_adjust_trackbar(bina_init,img)
+        on_binb_adjust_trackbar(binb_init,img)
+        # on_canny_a_adjust_trackbar(canny_a_init,img)
+        # on_canny_b_adjust_trackbar(canny_b_init,img)
+        # on_canny_c_adjust_trackbar(canny_c_init,img)
         
-        img_alpha_trackbar(img_alpha_init)
-        #img_beta_trackbar(img_beta_init)
-        img_gamma_trackbar(img_gamma_init)
+        img_alpha_trackbar(img_alpha_init,img)
+        #img_beta_trackbar(img_beta_init,img)
+        img_gamma_trackbar(img_gamma_init,img)
         
         # create switch for ON/OFF functionality
         switch = '0 : OFF \n1 : ON'
-        cv2.createTrackbar(switch, 'adjustments',0,1,setMask)
-            
-        while True:  
-            c = cv2.waitKey(0)
-            if 'q' == chr(c & 255):
-                return image, len(img_fins)
+        cv2.createTrackbar(switch, 'adjustments',0,1, partial(setMask,img=img))
+        res = cv2.waitKey(0)
+        if res !="":
+            cv2.destroyAllWindows() 
+            return image_ftr, len(img_fins)
             
 
 # image = cv2.imread(IMG_DIR+"NDD20/data/9.jpg")
