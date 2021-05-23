@@ -5,18 +5,21 @@
       <b-image
         v-if="file.type == 'dir'"
         :src="require('@/assets/images/folder.png')"
+        lazy
         class="image is-64x64 is-inline-block"
         ></b-image>
 
         <b-image
         v-if="file.type == 'csv'"
         :src="require('@/assets/images/csv.png')"
+        lazy
         class="image is-64x64 is-inline-block"
         ></b-image>
 
         <b-image
         v-if="file.type == 'json'"
         :src="require('@/assets/images/json.png')"
+        lazy
         class="image is-64x64 is-inline-block"
         ></b-image>
 

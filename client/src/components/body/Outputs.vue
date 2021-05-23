@@ -16,10 +16,10 @@
                         <template slot-scope="props">
                             <div class="media">
                               <div class="media-left">
-                                <img width="32" v-if="props.option.type == 'image'" :src="`${imagePath}/${props.option.file}`">
-                                <img width="32" v-if="props.option.type == 'dir'" :src="require('@/assets/images/folder.png')">
-                                <img width="32" v-if="props.option.type == 'tar'" :src="require('@/assets/images/archive.png')">
-                                <img width="32" v-if="props.option.type == 'zip'" :src="require('@/assets/images/archive.png')">
+                                <img width="32" v-if="props.option.type == 'image'" :src="`${imagePath}/${props.option.file}`" lazy>
+                                <img width="32" v-if="props.option.type == 'dir'" :src="require('@/assets/images/folder.png')" lazy>
+                                <img width="32" v-if="props.option.type == 'tar'" :src="require('@/assets/images/archive.png')" lazy>
+                                <img width="32" v-if="props.option.type == 'zip'" :src="require('@/assets/images/archive.png')" lazy>
                               </div>
                               <div class="media-content">
                                   {{ props.option.name}}
@@ -30,13 +30,14 @@
                 </b-field>
             </div>
         </div>
+        <hr>
         <section>
             <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
             <p v-if="!this.fileList.length && !this.loading">No datasets currently available.</p>
             <div v-else>
                 <section class="image-dir-path">
                     <div class="columns is-multiline">
-                        <div v-for="(file, index) in fileList" :key=index
+                        <div v-for="(file, index) in paginatedItems" :key=index
                             class="column is-one-fifth  has-text-centered">
                               <ImageItem v-bind:file="file" v-bind:imagePath="imagePath" v-on:dir_selected="changeDir(file)"  v-on:file_selected="selectFile(file)"/>
                         </div>
@@ -44,6 +45,16 @@
                 </section>
             </div>
         </section>
+        <hr>
+        <b-pagination
+            :total="itemTotal"
+            v-model="current"
+            :per-page="perPage"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page">
+        </b-pagination>
     </content>
 </template>
 
@@ -65,6 +76,8 @@ export default {
       imageDir: "",
       fileName: "",
       fileList: [],
+      current: 1,
+      perPage: 20,
     }
   },
   computed: {
@@ -77,7 +90,14 @@ export default {
     filteredFiles() {
       return this.fileList
       .filter(file => file.name.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
-    }
+    },
+    paginatedItems() {
+      let pageNumber = this.current-1
+      return this.fileList.slice(pageNumber * this.perPage, (pageNumber + 1) * this.perPage);  
+    },
+    itemTotal() {
+      return this.fileList.length
+    },
   },
   mounted() {
     this.getFileList()

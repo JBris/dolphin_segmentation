@@ -16,7 +16,7 @@
                         <template slot-scope="props">
                             <div class="media">
                                 <div class="media-left">
-                                    <img width="32" :src="require(`@/assets/images/${props.option.type}.png`)">
+                                    <img width="32" :src="require(`@/assets/images/${props.option.type}.png`)" lazy>
                                 </div>
                                 <div class="media-content">
                                     {{ props.option.name}}
@@ -27,13 +27,14 @@
                 </b-field>
             </div>
         </div>
+        <hr>
         <section>
             <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
             <p v-if="!this.fileList.length && !this.loading">No datasets currently available.</p>
             <div v-else>
                 <section class="image-dir-path">
                     <div class="columns is-multiline">
-                        <div v-for="(file, index) in fileList" :key=index
+                        <div v-for="(file, index) in paginatedItems" :key=index
                             class="column is-one-fifth  has-text-centered">
                             <DatasetItem v-bind:file="file"
                                 v-on:dir_selected="changeDir(file)" v-on:file_selected="selectFile(file)" />
@@ -42,6 +43,16 @@
                 </section>
             </div>
         </section>
+        <hr>
+        <b-pagination
+            :total="itemTotal"
+            v-model="current"
+            :per-page="perPage"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page">
+        </b-pagination>
     </content>
 </template>
 
@@ -63,6 +74,8 @@ export default {
       datasetDir: "",
       fileName: "",
       fileList: [],
+      current: 1,
+      perPage: 20,
     }
   },
   computed: {
@@ -73,7 +86,14 @@ export default {
       return this.fileList
       .filter(file => file.type != "dir")
       .filter(file => file.name.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
-    }
+    },
+    paginatedItems() {
+      let pageNumber = this.current-1
+      return this.fileList.slice(pageNumber * this.perPage, (pageNumber + 1) * this.perPage);  
+    },
+    itemTotal() {
+      return this.fileList.length
+    },
   },
   mounted() {
     this.getFileList()

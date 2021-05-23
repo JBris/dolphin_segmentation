@@ -17,9 +17,9 @@
                         <template slot-scope="props">
                             <div class="media">
                               <div class="media-left">
-                                <img width="32" v-if="props.option.status == 'complete'" :src="require('@/assets/images/task_complete.svg')">
-                                <img width="32" v-else-if="props.option.status == 'failed'" :src="require('@/assets/images/task_failed.svg')">
-                                <img width="32" v-else :src="require('@/assets/images/task_incomplete.svg')">
+                                <img width="32" v-if="props.option.status == 'complete'" :src="require('@/assets/images/task_complete.svg')" lazy>
+                                <img width="32" v-else-if="props.option.status == 'failed'" :src="require('@/assets/images/task_failed.svg')" lazy>
+                                <img width="32" v-else :src="require('@/assets/images/task_incomplete.svg')" lazy>
                               </div>
                               <div class="media-content">
                                   {{ props.option.name}}
@@ -30,13 +30,14 @@
                 </b-field>
             </div>
         </div>
+        <hr>
         <section>
             <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
             <p v-if="!this.taskList.length && !this.loading">No tasks currently available.</p>
             <div v-else>
                 <section class="image-dir-path">
                     <div class="columns is-multiline">
-                        <div v-for="(task, index) in taskList" :key=index
+                        <div v-for="(task, index) in paginatedItems" :key=index
                             class="column is-one-fifth  has-text-centered">
                               <TaskItem v-bind:task="task" v-on:task_selected="selectTask(task)"/>
                         </div>
@@ -44,6 +45,16 @@
                 </section>
             </div>
         </section>
+        <hr>
+        <b-pagination
+            :total="itemTotal"
+            v-model="current"
+            :per-page="perPage"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page">
+        </b-pagination>
     </content>
 </template>
 
@@ -65,7 +76,9 @@ export default {
       error: false,
       tasksDir: "",
       taskName: "",
-      taskList: []
+      taskList: [],
+      current: 1,
+      perPage: 20,
     }
   },
   computed: {
@@ -74,7 +87,14 @@ export default {
     },
     taskListNames() {
       return this.taskList.map(task => task.name)
-    }
+    },
+    paginatedItems() {
+      let pageNumber = this.current-1
+      return this.taskList.slice(pageNumber * this.perPage, (pageNumber + 1) * this.perPage);  
+    },
+    itemTotal() {
+      return this.taskList.length
+    },
   },
   mounted() {
     this.getTaskList()
