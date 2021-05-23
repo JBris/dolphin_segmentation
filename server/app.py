@@ -1,9 +1,9 @@
-from celery import current_task, states
-from celery.exceptions import Ignore
+from celery import current_task
+from celery.result import AsyncResult
+import celery.states as states
 from decouple import config
 from flask import Flask, jsonify
 from flask_cors import CORS
-
 from api.pipeline import image_pipeline
 from api.routes.file  import file_api
 from api.services.cache import Cache
@@ -47,12 +47,14 @@ def process_file_select(data):
     except:
         current_task.update_state( state = "failure", meta = 'image processing failed')
         status = "failed"
-    
+        
     try: 
-        task_data = Tasks().read_file(task_name)
+        tasks = Tasks()
+        task_data = tasks.read_file(task_name)
+        if not task_data: return { "task": task_name, "status": "cancelled" }
         task_data["status"] = status
-        Tasks().write_file(task_data)
-    except: Tasks().write_file({"name": task_name, "status": status, "autodownload": autodownload, "cache_duration": cache_duration})
+        tasks.write_file(task_data)
+    except: return { "task": task_name, "status": status, "autodownload": autodownload }
     return { "task": task_name, "status": status, "autodownload": autodownload }
 
 if __name__ == '__main__':

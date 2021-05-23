@@ -63,7 +63,7 @@ import collection from '@/api/file/collection'
 import { TASKS } from '@/api/endpoints'
 import TaskItem from '@/components/body/TaskItem'
 import TaskCreateForm from '@/components/forms/task/TaskCreateForm'
-import DatasetForm from '@/components/forms/DatasetForm'
+import TaskForm from '@/components/forms/TaskForm'
 
 export default {
   name: 'Tasks',
@@ -129,9 +129,9 @@ export default {
       if(task == null) return;
       this.$buefy.modal.open({
         parent: this,
-        component: DatasetForm,
+        component: TaskForm,
         props: {
-          file: task,
+          task: task,
         },
         hasModalCard: true,
         trapFocus: true,

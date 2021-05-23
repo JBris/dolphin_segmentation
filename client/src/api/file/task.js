@@ -1,5 +1,5 @@
 import client from '@/api/http/client'
-import { SELECT, CHECK_PROGRESS } from '@/api/endpoints'
+import { SELECT, CHECK_PROGRESS, CANCEL_TASKS } from '@/api/endpoints'
 
 class Task {   
     
@@ -23,13 +23,18 @@ class Task {
         this.taskRegistry[data["task_id"]] = setInterval(async () => {
             const res = await client.get(`${host}/${CHECK_PROGRESS}/${data["task_id"]}`)
             if(res["status"] == "complete" || res["status"] == "failed") { 
+                clearInterval(this.taskRegistry[data["task_id"]])
                 $store.commit('updateTaskStatus', `${name} ${res["status"]}`) 
-                clearInterval(this.taskRegistry[data["task_id"]])
             } else if(res["status"] == "error") { 
-                $store.commit('updateTaskStatus', `${name} failed`) 
                 clearInterval(this.taskRegistry[data["task_id"]])
+                $store.commit('updateTaskStatus', `${name} failed`) 
             }
-          }, 5000)
+          }, $store.state.TASK_POLLING_INTERVAL)
+    }
+
+    async cancel(host, id) {
+        clearInterval(this.taskRegistry[id])
+        return client.get(`${host}/${CANCEL_TASKS}/${id}`)
     }
 }
 

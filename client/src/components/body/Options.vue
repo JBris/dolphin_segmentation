@@ -129,7 +129,7 @@
       </b-field>
     </section>
 
-    <br/>
+    <hr>
 
     <section>
       <div class="buttons">
