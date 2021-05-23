@@ -188,6 +188,7 @@ def file_delete():
 def file_check_progress(task_id: str):
     job = current_app.config["FILE_WORKER"].AsyncResult(task_id)
     if job.state == states.PENDING: return jsonify({"status": "pending"}), 202
+    elif job.state == "cancelled" or job.state == states.REVOKED: return jsonify({"status": "cancelled"})
     elif job.state == states.SUCCESS: return jsonify(job.result)
     elif job.state == "PROGRESS":
         res = {
@@ -202,7 +203,13 @@ def file_check_progress(task_id: str):
             res["substep_num"] = job.result['substep_num']
             res["substep_total"] = job.result['substep_total']
         return jsonify(res), 202 
-    else: return jsonify({"status": "error"})
+    else: return jsonify({"status": "error", "state": job.state})
+
+@file_api.route('/cancel_task/<string:task_id>', methods=['GET'])
+def file_cancel_task(task_id: str):
+    job = current_app.config["FILE_WORKER"].AsyncResult(task_id)
+    job.revoke(terminate = True)
+    return jsonify({"status": "cancelled"})
 
 @file_api.route('/images', methods=['POST'])
 def file_view_images():

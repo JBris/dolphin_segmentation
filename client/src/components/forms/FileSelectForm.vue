@@ -18,13 +18,19 @@
                     <b-field>
                         <b-autocomplete v-model="fileName" group-field="type" field="name" icon="magnify"
                             @select="option => selectFile(option)" :data="filteredFiles">
-                            <template slot-scope="props">
-                                <div class="media">
-                                <div class="media-content">
-                                    {{ props.option.name}}
+                        <template slot-scope="props">
+                            <div class="media">
+                              <div class="media-left">
+                                  <img width="32" v-if="props.option.type == 'image'" :src="`${imagePath}/${props.option.file}`" lazy>
+                                  <img width="32" v-if="props.option.type == 'dir'" :src="require('@/assets/images/folder.png')" lazy>
+                                  <img width="32" v-if="props.option.type == 'tar'" :src="require('@/assets/images/archive.png')" lazy>
+                                  <img width="32" v-if="props.option.type == 'zip'" :src="require('@/assets/images/archive.png')" lazy>
                                 </div>
-                                </div>
-                            </template>
+                              <div class="media-content">
+                                  {{ props.option.name}}
+                              </div>
+                            </div>
+                        </template>
                         </b-autocomplete>
                     </b-field>
                 </div>
