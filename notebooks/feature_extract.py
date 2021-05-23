@@ -279,7 +279,7 @@ def feature_extract(img_in, IMG_SIZE):
         fp = [0, 80, 200, 200, 200]
         x = np.arange(256)
         table = np.interp(x, xp, fp).astype('uint8')
-        img_in = cv2.LUT(img_in, table)
+        #img_in = cv2.LUT(img_in, table)
     
         cv2.bilateralFilter(img_in, 3, 50, 50)
     
