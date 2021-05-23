@@ -258,6 +258,12 @@ def file_view_dataset():
     if data is None: return jsonify(validator.get_error_message()), 400 
     return jsonify(data["data"])
 
+@file_api.route('/task/<string:task>', methods=['GET'])
+def file_view_task(task: str):
+    task_data = Tasks().read_file(task)
+    if not task_data: return jsonify({"error": 1, "Message": f"Task not found: {task}" }), 400
+    return jsonify(task_data)
+
 @file_api.route('/options', methods=['GET', 'POST', 'PUT'])
 def file_options():
     if request.method == "GET": return jsonify(current_app.config["OPTIONS"].get())

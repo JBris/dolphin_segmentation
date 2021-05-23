@@ -17,7 +17,7 @@ export default new Vuex.Store({
     NOTEBOOK_HOST: process.env.VUE_APP_NOTEBOOK_HOST,
     TASKS_HOST: process.env.VUE_APP_TASKS_HOST,
     CONTAINERS_HOST: process.env.VUE_APP_CONTAINERS_HOST,
-    TASK_POLLING_INTERVAL: process.env.TASK_POLLING_INTERVAL || 5000,
+    TASK_POLLING_INTERVAL: process.env.TASK_POLLING_INTERVAL || 2500,
     permittedFileFormats: ['csv', 'json'],
     permittedArchiveFormats: ['zip', 'tar'],
     permittedFileInputs: { "dir": "Directory", "image": "Image", "zip": "Zip", "tar": "Tar" },

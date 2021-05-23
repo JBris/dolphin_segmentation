@@ -12,7 +12,7 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/images', name: 'Images', component: ImageList },
-  { path: '/datasets', name: 'Datasets', component: Datasets },
+  { path: '/datasets', name: 'Datasets', component: Datasets, props: true },
   { path: '/outputs', name: 'Outputs', component: Outputs },
   { path: '/tasks', name: 'Tasks', component: Tasks },
   { path: '/options', name: 'Options', component: Options }

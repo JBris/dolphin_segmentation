@@ -1,44 +1,73 @@
 <template>
     <section>
         <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
-        <div id="dataset-visualisation"></div>
+        <div class="content">
+            <h3> Task {{taskBody.status}}</h3>
+            <p class="upper">Module: {{taskBody.module}}</p>
+            <p class="upper">Action: {{taskBody.task}}</p>
+            <p class="upper">Solver: {{taskBody.solver}}</p>
+            <p>Destination: <router-link :to="{ name: 'Datasets', params: { path: taskBody.out }}" v-on:click.native="close">{{taskBody.out}}</router-link></p>
+        </div>
+ 
+        <div >
+            <hr>
+            <h3>Progress</h3>
+            <h3 v-if="progress.step">Step: {{progress.step}}</h3>
+            <b-progress v-if="progress.status == 'progress'" type="is-success"></b-progress>
+            <b-progress v-else type="is-success" :value="value"></b-progress>
+        </div>
     </section>
 </template>
 
 <script>
-import file from '@/api/file/file'
 
 export default {
     name: 'VisualiseForm',
     props: {
-        file: {
+        task: {
             type: Object,
             required: true
         },
+        taskBody: {
+            type: Object,
+            required: true          
+        },
+        progress: {
+            type: Object,
+            required: true          
+        },
+        value: {
+            type: Number,
+            required: false,
+            default: 0
+        }
     },
     data() {
         return {
             loading: false,
-            plot: {}
         }
     },
-    mounted() {
-        this.loadPlot()
-    },
     methods: {
-        async loadPlot() {
-            this.loading = true
-            this.plot = await file.visualise(this.$store.state.SERVER_HOST, this.file.file, this.file.type, this.$store.state.visualisationMethod)
-            window.Bokeh.embed.embed_item(this.plot, "dataset-visualisation")
-            this.loading = false
-        },
+        close(){
+            this.$emit('close_modal')
+        }
     }
 }
 </script>
 
 <style scoped lang="css">
-.group-header {
-  color: #2c3e50;
-  text-align: left;
+
+h3{
+    padding-bottom: 3vh;
 }
+
+section {
+    color: #2c3e50;
+    padding-left:2.5vw;
+}
+
+.upper {
+    text-transform:capitalize;
+}
+ 
 </style>

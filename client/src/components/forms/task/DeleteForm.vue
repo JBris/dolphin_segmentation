@@ -7,7 +7,7 @@
             <div class="buttons">
                 <b-button type="is-danger"
                     v-on:click="confirm"
-                    icon-left="cancel">
+                    icon-left="check">
                     Confirm
                 </b-button>
             </div>

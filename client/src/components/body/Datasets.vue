@@ -16,7 +16,8 @@
                         <template slot-scope="props">
                             <div class="media">
                                 <div class="media-left">
-                                    <img width="32" :src="require(`@/assets/images/${props.option.type}.png`)" lazy>
+                                    <img width="32" v-if="props.option.type != 'dir'" :src="require(`@/assets/images/${props.option.type}.png`)" lazy>
+                                    <img width="32" v-if="props.option.type == 'dir'" :src="require('@/assets/images/folder.png')" lazy>
                                 </div>
                                 <div class="media-content">
                                     {{ props.option.name}}
@@ -36,8 +37,10 @@
                     <div class="columns is-multiline">
                         <div v-for="(file, index) in paginatedItems" :key=index
                             class="column is-one-fifth  has-text-centered">
-                            <DatasetItem v-bind:file="file"
+                            <DatasetItem v-bind:file="file" v-if="file.type != 'dir'" 
                                 v-on:dir_selected="changeDir(file)" v-on:file_selected="selectFile(file)" />
+                            <ImageItem v-bind:file="file" v-bind:imagePath="imagePath" v-if="file.type == 'dir'" 
+                                v-on:dir_selected="changeDir(file)" v-on:file_selected="selectDir(file)" />
                         </div>
                     </div>
                 </section>
@@ -58,14 +61,17 @@
 
 <script>
 import collection from '@/api/file/collection'
-import { DATASETS } from '@/api/endpoints'
+import { DATASETS, IMAGE } from '@/api/endpoints'
 import DatasetItem from '@/components/body/DatasetItem'
 import DatasetForm from '@/components/forms/DatasetForm'
+import ImageItem from '@/components/body/ImageItem'
+import ImageForm from '@/components/forms/ImageForm'
 
 export default {
   name: 'Datasets',
   components: {
-    DatasetItem
+    DatasetItem,
+    ImageItem
   },
   data() {
     return {
@@ -78,13 +84,19 @@ export default {
       perPage: 20,
     }
   },
+  props:{
+    path: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
   computed: {
     datasetDirList() {
       return this.datasetDir.split("/").filter(ele => ele != "")
     },
     filteredFiles() {
       return this.fileList
-      .filter(file => file.type != "dir")
       .filter(file => file.name.toLowerCase().indexOf(this.fileName.toLowerCase()) >= 0)
     },
     paginatedItems() {
@@ -94,9 +106,13 @@ export default {
     itemTotal() {
       return this.fileList.length
     },
+    imagePath() {
+      return `${this.$store.state.SERVER_HOST}/${IMAGE}`
+    },
   },
   mounted() {
-    this.getFileList()
+    if(this.path != "") { this.getFileList(this.path) }
+    else{ this.getFileList() }
   },
   methods: {
     async getFileList(datasetDir = this.$store.state.DATASET_DIR, loading = true) {
@@ -116,11 +132,29 @@ export default {
     },
     selectFile(file) {
       if(file == null) return;
+      if(file.type == "dir"){ return this.selectDir(file) }
       this.$buefy.modal.open({
         parent: this,
         component: DatasetForm,
         props: {
           file
+        },
+        hasModalCard: true,
+        trapFocus: true,
+        fullScreen: true,
+        events: {
+          update_file_list: () => this.getFileList(this.$store.state.DATASET_DIR, false)
+        }
+      })
+    },
+    selectDir(file) {
+      if(file == null) return;
+      this.$buefy.modal.open({
+        parent: this,
+        component: ImageForm,
+        props: {
+          file,
+          imagePath: this.imagePath
         },
         hasModalCard: true,
         trapFocus: true,
