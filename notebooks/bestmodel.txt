@@ -1,0 +1,1 @@
+../models/finnet/checkpoints/1621739241/finmod_186.h5
