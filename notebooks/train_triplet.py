@@ -36,7 +36,7 @@ from parameters import *
 
 tf.function(jit_compile=True)
 # os.environ['XLA_FLAGS'] = '--tf_xla_disable_xla_devices'
-os.environ['XLA_FLAGS'] = '--tf_xla_disable_xla_devices --tf_xla_auto_jit=2 --tf_xla_cpu_global_jit'
+os.environ['XLA_FLAGS'] = '--tf_xla_enable_xla_devices --tf_xla_auto_jit=2 --tf_xla_cpu_global_jit'
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 with tf.Graph().as_default():
         gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.7)
