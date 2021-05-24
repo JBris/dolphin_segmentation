@@ -3,6 +3,7 @@ import pandas as pd
 
 from api.processing.models.clustering.hdbscan import HDBSCAN
 from api.processing.models.dim_reduction.umap import UMAP
+# from api.processing.models.neural_nets.triplet_loss import TripletLoss
 from api.processing.models.segmentation.yolo import YOLO
 
 from api.services.file_select import FileTask, FileSolver
@@ -35,6 +36,7 @@ class Processor:
         if data["data"]["task"] == FileTask.SEGMENTATION.value: return self.segment(data)
 
         if data["data"]["solver"] == FileSolver.UMAP.value: embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
+        # elif data["data"]["solver"] == FileSolver.TRIPLET_LOSS.value: embeddings = TripletLoss().transform(data["files"], data["data"]["module"], data["data"]["task"])
         else: embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
 
         hdbscan = HDBSCAN()

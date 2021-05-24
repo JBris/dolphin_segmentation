@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 from pathlib import Path
-from scipy.spatial import distance
 
 class YOLO:
     IMG_SIZE = 256
