@@ -1,4 +1,7 @@
-#### PART OF THIS CODE IS USING CODE FROM VICTOR SY WANG: https://github.com/iwantooxxoox/Keras-OpenFace/blob/master/utils.py ####
+######################################################################################
+## Code is based on a facenet implementation: https://github.com/sainimohit23/FaceNet-Real-Time-face-recognition
+## Code was amended for the use of this project
+## PART OF THIS CODE IS USING CODE FROM VICTOR SY WANG: https://github.com/iwantooxxoox/Keras-OpenFace/blob/master/utils.py ####
 
 import os
 import logging

@@ -1,3 +1,7 @@
+######################################################################################
+## Code is based on a facenet implementation: https://github.com/sainimohit23/FaceNet-Real-Time-face-recognition
+## Code was amended for the use of this project
+
 import os
 import logging
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
