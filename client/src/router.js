@@ -11,9 +11,9 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
-  { path: '/images', name: 'Images', component: ImageList },
+  { path: '/images', name: 'Images', component: ImageList, props: true },
   { path: '/datasets', name: 'Datasets', component: Datasets, props: true },
-  { path: '/outputs', name: 'Outputs', component: Outputs },
+  { path: '/outputs', name: 'Outputs', component: Outputs, props: true },
   { path: '/tasks', name: 'Tasks', component: Tasks },
   { path: '/options', name: 'Options', component: Options }
 ]

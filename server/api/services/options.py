@@ -41,7 +41,12 @@ default_options = {
             "name": "UMAP",
             "enabled": False,
             "editable": True
-        }
+        },
+        "yolo": {
+            "name": "Yolo",
+            "enabled": True,
+            "editable": False
+        },
     },
     "autodownload_default": config('AUTODOWNLOAD_FILE', default = True, cast = bool),
     "cache_duration_default": config('CACHE_DURATION', default = 86400, cast = int),

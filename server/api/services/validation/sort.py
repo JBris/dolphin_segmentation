@@ -1,6 +1,6 @@
 import os
 
-from api.services.content_type import FileFormat
+from api.postprocessing.content_type import FileFormat
 from api.services.validation.validator_base import ValidatorBase 
 
 from enum import Enum, unique

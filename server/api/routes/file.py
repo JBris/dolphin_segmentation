@@ -5,13 +5,13 @@ from flask import Blueprint, json, request, jsonify, current_app, url_for, make_
 
 file_api = Blueprint('file', __name__, url_prefix = "/file")
 
-from api.services.content_type import ContentType
+from api.postprocessing.content_type import ContentType
+from api.postprocessing.serializer import Serializer
 from api.services.archiver import Archiver
 from api.services.copy import Copy
 from api.services.dataset import Dataset
 from api.services.deletion import Deletion
 from api.services.image import Image
-from api.services.serializer import Serializer
 from api.services.sort import Sort
 from api.services.tasks import Tasks
 from api.services.validation.archive import FileArchiveValidator

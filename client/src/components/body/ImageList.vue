@@ -33,7 +33,7 @@
         <hr>
         <section>
             <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
-            <p v-if="!this.fileList.length && !this.loading">No datasets currently available.</p>
+            <p v-if="!this.fileList.length && !this.loading">No images currently available.</p>
             <div v-else>
                 <section class="image-dir-path">
                     <div class="columns is-multiline">
@@ -80,6 +80,13 @@ export default {
       perPage: 20,
     }
   },
+  props:{
+    path: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
   computed: {
     imagePath() {
         return `${this.$store.state.SERVER_HOST}/${IMAGE}`
@@ -100,7 +107,8 @@ export default {
     },
   },
   mounted() {
-    this.getFileList()
+    if(this.path != "") { this.getFileList(this.path) }
+    else{ this.getFileList() }
   },
   methods: {
     async getFileList(imageDir = this.$store.state.IMAGE_DIR, loading = true) {

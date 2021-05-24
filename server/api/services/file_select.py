@@ -5,7 +5,7 @@ permitted_format =  {
     "name": "Provide a name for this file selection.",
     "module": "dolphin",
     "task": "segmentation | classification | identification",
-    "solver": "umap | triplet_loss",
+    "solver": "umap | triplet_loss | yolo",
     "type": "zip | tar | dir | images",
     "files": "[files]",
     "out": "output/directory"
@@ -40,7 +40,8 @@ class FileTask(Enum):
 class FileSolver(Enum):
     UMAP = "umap"
     TRIPLET_LOSS = "triplet_loss"
-
+    YOLO = "yolo"
+    
 @unique
 class FileType(Enum):
     ZIP = "zip"

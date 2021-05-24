@@ -1,26 +1,26 @@
 <template>
   <section>
     <div class ="image-card" @click="onSelect(file)">
-      <b-image
+      <img
         v-if="file.type == 'image'"
         :src="`${imagePath}/${file.file}`"
         lazy
         class="image is-64x64 is-inline-block"
-      ></b-image>
+      /> 
 
-      <b-image
+      <img
         v-if="file.type == 'dir'"
         :src="require('@/assets/images/folder.png')"
         lazy
         class="image is-64x64 is-inline-block"
-        ></b-image>
+        /> 
 
-        <b-image
+        <img
         v-if="file.type == 'zip' || file.type == 'tar'"
         :src="require('@/assets/images/archive.png')"
         lazy
         class="image is-64x64 is-inline-block"
-        ></b-image>
+        />
 
       <p>{{file.name}}</p>
     </div>

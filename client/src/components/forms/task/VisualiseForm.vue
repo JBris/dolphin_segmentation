@@ -6,9 +6,9 @@
             <p class="upper">Module: {{taskBody.module}}</p>
             <p class="upper">Action: {{taskBody.task}}</p>
             <p class="upper">Solver: {{taskBody.solver}}</p>
-            <p>Destination: <router-link :to="{ name: 'Datasets', params: { path: taskBody.out }}" v-on:click.native="close">{{taskBody.out}}</router-link></p>
+            <p>Destination: <router-link :to="{ name: destination, params: { path: taskBody.out }}" v-on:click.native="close">{{taskBody.out}}</router-link></p>
         </div>
- 
+
         <div >
             <hr>
             <h3>Progress</h3>
@@ -45,6 +45,15 @@ export default {
     data() {
         return {
             loading: false,
+        }
+    },
+    computed: {
+        destination() {
+            if(!this.taskBody.out) { return "" }
+            if(this.taskBody.out.startsWith(this.$store.state.DATASET_DIR)) { return "Datasets" }
+            if(this.taskBody.out.startsWith(this.$store.state.OUT_DIR)) { return "Outputs" }
+            if(this.taskBody.out.startsWith(this.$store.state.IMAGE_DIR)) { return "Images" }
+            return ""
         }
     },
     methods: {

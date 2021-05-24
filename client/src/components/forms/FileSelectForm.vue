@@ -37,7 +37,7 @@
             </div>
             <section>
                 <b-loading :is-full-page="true" v-model="loading" :can-cancel="true"></b-loading>
-                <p v-if="!this.fileList.length && !this.loading">No datasets currently available.</p>
+                <p v-if="!this.fileList.length && !this.loading">No files currently available.</p>
                 <div v-else>
                     <section class="image-dir-path">
                         <div class="columns is-multiline">

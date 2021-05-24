@@ -2,26 +2,26 @@
   <section>
     <div class ="image-card" @click="onSelect(task)">
 
-        <b-image
+        <img
             v-if="task.status == 'complete'"
             :src="require('@/assets/images/task_complete.svg')"
             lazy
             class="image is-64x64 is-inline-block"
-        ></b-image>
+        /> 
 
-        <b-image
+        <img
             v-else-if="task.status == 'failed'"
             :src="require('@/assets/images/task_failed.svg')"
             lazy
             class="image is-64x64 is-inline-block"
-        ></b-image>
+        /> 
 
-        <b-image
+        <img
             v-else
             :src="require('@/assets/images/task_incomplete.svg')"
             lazy
             class="image is-64x64 is-inline-block"
-        ></b-image>
+        /> 
 
       <p>{{task.name}}</p>
       <p class="task-status">{{task.status}}</p>

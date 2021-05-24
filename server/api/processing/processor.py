@@ -3,7 +3,9 @@ import pandas as pd
 
 from api.processing.models.clustering.hdbscan import HDBSCAN
 from api.processing.models.dim_reduction.umap import UMAP
-from api.services.file_select import FileSolver
+from api.processing.models.segmentation.yolo import YOLO
+
+from api.services.file_select import FileTask, FileSolver
 
 def create_processed_df(embeddings, cluster, data):
     return pd.DataFrame(
@@ -23,12 +25,17 @@ def create_processed_df(embeddings, cluster, data):
     )
 
 class Processor:
+ 
+    def segment(self, data):
+        if data["data"]["solver"] == FileSolver.YOLO.value: return YOLO().segment(data)
+        else: return YOLO().segment(data)
+
     def process(self, data, current_task):
         current_task.update_state(state = "PROGRESS", meta = {"step": "Processing images", "step_num": 2, "step_total": 4, "substeps": 0})
-        if data["data"]["solver"] == FileSolver.UMAP.value: 
-            embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
-        else:
-            embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
+        if data["data"]["task"] == FileTask.SEGMENTATION.value: return self.segment(data)
+
+        if data["data"]["solver"] == FileSolver.UMAP.value: embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
+        else: embeddings = UMAP().transform(data["files"], data["data"]["module"], data["data"]["task"])
 
         hdbscan = HDBSCAN()
         hdbscan.fit(embeddings)
