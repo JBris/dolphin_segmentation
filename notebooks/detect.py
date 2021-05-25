@@ -30,8 +30,6 @@ from pathlib import Path
 # helper methods for feature extraction
 from feature_extract import *
 
-from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout
-from PyQt5.QtGui import QPixmap, QColor
 import sys
 from parameters import *
 from functools import partial
