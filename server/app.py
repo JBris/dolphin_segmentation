@@ -41,15 +41,10 @@ def process_file_select(data):
     if data.get("autodownload") == True or data.get("autodownload") == False: autodownload = data["autodownload"]
     else: autodownload = config('AUTODOWNLOAD_FILE', default = True, cast = bool)
 
-    pipeline = image_pipeline(data)
-    return pipeline
-    return jsonify(pipeline)
-
     status = "complete"
     try: 
         pipeline = image_pipeline(data)
         if pipeline is None: raise Exception()
-        return jsonify(pipeline)
     except:
         current_task.update_state( state = "failure", meta = 'image processing failed')
         status = "failed"

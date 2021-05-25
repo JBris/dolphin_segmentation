@@ -169,7 +169,9 @@ def reconstruct(descriptors, degree, IMG_SIZE):
 #########################################################################
 ### YOLO
 def find_fin(image,weightsPath,configPath, CONFIDENCE = 0.5, THRESHOLD = 0.3,img_size=512,pad_col=0):   
-    net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
+    #net = cv2.dnn.readNetFromreadNetDarknet(configPath, weightsPath)
+    net = cv2.dnn.readNet(configPath, weightsPath)
+    net = cv2.dnn_DetectionModel(net)
     img_find = image.copy()
     (H, W) = image.shape[:2]
     # determine only the *output* layer names that we need from YOLO

@@ -248,7 +248,9 @@ export default {
             this.$parent.close()
         },
         nameChange() {
-            this.out = `${this.$store.state.DATASET_DIR}/${this.name}`
+            if(this.task == "identification" || this.task == "classification") { this.out = `${this.$store.state.DATASET_DIR}/${this.name}` }
+            else if(this.task == "segmentation") { this.out = `${this.$store.state.OUT_DIR}/${this.name}`  }
+            
         },
         validate() {
             if(this.name == "") {
